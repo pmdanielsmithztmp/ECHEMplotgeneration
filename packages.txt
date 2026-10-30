@@ -1,0 +1,3 @@
+fonts-liberation
+fonts-ipaexfont-mincho
+fonts-noto-cjk-extra
