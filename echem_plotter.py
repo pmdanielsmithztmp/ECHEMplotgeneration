@@ -84,6 +84,9 @@ TR = {
         "dual_x": "启用上方第二个 x 轴 (x2)",
         "y2col": "右轴数据列",
         "y2kind": "右轴的物理量类型",
+        "x2col": "上方 x 轴数据列",
+        "x2kind": "上方 x 轴物理量类型",
+        "color_xt": "上方 x 轴颜色",
         "kind_cur": "电流（做单位换算）",
         "kind_pot": "电位（做参比换算）",
         "kind_other": "其他（不换算）",
@@ -174,6 +177,10 @@ TR = {
         "yc_custom": "自定义",
         "color_yl": "左 y 轴颜色",
         "color_yr": "右 y 轴颜色",
+        "sec_leg_text": "自定义图例名称（留空为默认）",
+        "leg_text_single": "{name} 图例名称",
+        "leg_text_left": "{name} (左轴) 图例名称",
+        "leg_text_right": "{name} (右轴) 图例名称",
         "sec_labels": "坐标轴标签（留空为自动）",
         "lab_x": "x 轴标签",
         "lab_x2": "上方 x 轴标签 (x2)",
@@ -260,6 +267,9 @@ TR = {
         "dual_x": "上部に第2の x 軸を使う (x2)",
         "y2col": "右軸のデータ列",
         "y2kind": "右軸の物理量の種類",
+        "x2col": "上部 x 軸データ列",
+        "x2kind": "上部 x 軸の物理量の種類",
+        "color_xt": "上部 x 軸の色",
         "kind_cur": "電流（単位換算あり）",
         "kind_pot": "電位（参照電極換算あり）",
         "kind_other": "その他（換算しない）",
@@ -877,6 +887,13 @@ def apply_ticks(ax, ax2, ax3, p):
             ax3.minorticks_off()
 
 
+def color_xaxis(a, side, c):
+    if a.xaxis:
+        a.xaxis.label.set_color(c)
+        a.tick_params(axis="x", which="both", colors=c)
+    a.spines[side].set_color(c)
+
+
 def color_yaxis(a, side, c):
     if a.yaxis:
         a.yaxis.label.set_color(c)
@@ -914,13 +931,17 @@ def build_fig(results, mode, p, show_removed):
     actual_y2l = (p["lab_y2"] or y2_label(p, p["y2kind"], results[0]["y2name"])) if p["dual"] else ""
 
     multi = len(results) > 1
+    custom_legs = p.get("custom_legends", [])
     for k, r in enumerate(results):
         cl, cr = p["colors"][k]
+        c_left, c_right = custom_legs[k] if k < len(custom_legs) else ("", "")
         if p["dual"]:
-            left_name = f"{r['name']} ({short(actual_yl)})" if multi else actual_yl
-            right_name = f"{r['name']} ({short(actual_y2l)})" if multi else actual_y2l
+            default_left = f"{r['name']} ({short(actual_yl)})" if multi else actual_yl
+            default_right = f"{r['name']} ({short(actual_y2l)})" if multi else actual_y2l
+            left_name = c_left if c_left else default_left
+            right_name = c_right if c_right else default_right
         else:
-            left_name = r['name']
+            left_name = c_left if c_left else r['name']
 
         draw(ax, r["x"], r["y"], r["y_raw"], r["keep"], cl, left_name, sm_left)
         if p["dual"]:
@@ -990,6 +1011,8 @@ def build_fig(results, mode, p, show_removed):
     color_yaxis(ax, "left", p["yl_col"])
     if p["dual"]:
         color_yaxis(ax2, "right", p["yr_col"])
+    if ax3 is not None:
+        color_xaxis(ax3, "top", p.get("xt_col", "#000000"))
     fig._tick_skipped = bool(skipped)
 
     if p["legend"] and handles:
@@ -1075,13 +1098,17 @@ def build_plotly(results, mode, p, hover_mode, spikes, show_removed):
     actual_yl = p["lab_y"] or yl
     actual_y2l = (p["lab_y2"] or y2_label(p, p["y2kind"], results[0]["y2name"])) if p["dual"] else ""
 
+    custom_legs = p.get("custom_legends", [])
     for k, r in enumerate(results):
         cl, cr = p["colors"][k]
+        c_left, c_right = custom_legs[k] if k < len(custom_legs) else ("", "")
         if p["dual"]:
-            left_name = f"{r['name']} ({short(actual_yl)})" if multi else actual_yl
-            right_name = f"{r['name']} ({short(actual_y2l)})" if multi else actual_y2l
+            default_left = f"{r['name']} ({short(actual_yl)})" if multi else actual_yl
+            default_right = f"{r['name']} ({short(actual_y2l)})" if multi else actual_y2l
+            left_name = c_left if c_left else default_left
+            right_name = c_right if c_right else default_right
         else:
-            left_name = r['name']
+            left_name = c_left if c_left else r['name']
 
         add(r, r["y"], r["y_raw"], cl, left_name, yt, "y", sm_left)
         if p["dual"]:
@@ -1125,6 +1152,18 @@ def build_plotly(results, mode, p, hover_mode, spikes, show_removed):
                 overlaying="y", side="right", showgrid=False, showline=True, ticks=ticks,
                 title=dict(text=y2t, font=dict(color=p["yr_col"])), tickfont=dict(color=p["yr_col"]), linecolor=p["yr_col"],
                 range=_axis_range(p["y2lim"], all_y2), dtick=p["y2step"],
+            )
+        )
+    if p.get("dual_x"):
+        x2t = html_label(p.get("lab_x2") or "")
+        fig.update_layout(
+            xaxis2=dict(
+                overlaying="x", side="top", showgrid=False, showline=True, ticks=ticks,
+                title=dict(text=x2t, font=dict(color=p.get("xt_col", "#000000"))),
+                tickfont=dict(color=p.get("xt_col", "#000000")),
+                linecolor=p.get("xt_col", "#000000"),
+                range=_axis_range(p.get("x2lim"), all_x), dtick=p.get("x2step"),
+                **spike,
             )
         )
     return fig
@@ -1221,6 +1260,14 @@ if p["dual"]:
     y2kind = sb.selectbox(t("y2kind"), ["cur", "pot", "other"], index=guess, format_func=lambda k: t("kind_" + k), key=f"y2kind_{y2i}")
 p["y2kind"] = y2kind
 
+x2i, x2kind = 0, "other"
+if p["dual_x"]:
+    x2i = sb.selectbox(t("x2col"), range(len(cols)), index=min(0, len(cols) - 1), format_func=lambda i: cols[i], key=f"x2i_{sig}")
+    nm = str(cols[x2i]).lower()
+    guess = 0 if "time" in nm else (1 if "potential" in nm else 2)
+    x2kind = sb.selectbox(t("x2kind"), ["time", "pot", "other"], index=guess, format_func=lambda k: t("kind_" + k), key=f"x2kind_{x2i}")
+p["x2kind"] = x2kind
+
 # ---- 单位与参比
 need_cur = mode in ("CV", "CA") or (p["dual"] and y2kind == "cur")
 need_pot = mode in ("CV", "CP") or (p["dual"] and y2kind == "pot")
@@ -1313,7 +1360,7 @@ with sb.expander(t("sec_ticks")):
     p["tick_marks"] = {s: cc[i].checkbox(t("side_" + s), value=True, key=f"tm_{s}") for i, s in enumerate(SIDES)}
     st.caption(t("tick_nums"))
     cc = st.columns(4)
-    num_default = {"bottom": True, "left": True, "top": False, "right": p["dual"]}
+    num_default = {"bottom": True, "left": True, "top": p.get("dual_x", False), "right": p["dual"]}
     p["tick_nums"] = {
         s: cc[i].checkbox(t("side_" + s), value=num_default[s], key=f"tn_{s}_{p['dual']}") for i, s in enumerate(SIDES)
     }
@@ -1344,14 +1391,30 @@ with sb.expander(t("sec_color"), expanded=True):
         t("yaxis_color"), ["black", "follow", "custom"], index=(1 if p["dual"] else 0),
         format_func=lambda k: t("yc_" + k), key=f"yc_mode_{p['dual']}",
     )
-    p["yl_col"], p["yr_col"] = "#000000", "#000000"
+    p["yl_col"], p["yr_col"], p["xt_col"] = "#000000", "#000000", "#000000"
     if yc_mode == "follow":
         p["yl_col"] = p["colors"][0][0]
         p["yr_col"] = p["colors"][0][1] or "#000000"
+        p["xt_col"] = p["colors"][0][0]
     elif yc_mode == "custom":
         p["yl_col"] = st.color_picker(t("color_yl"), "#000000", key="yl_col")
         if p["dual"]:
             p["yr_col"] = st.color_picker(t("color_yr"), "#000000", key="yr_col")
+        if p.get("dual_x"):
+            p["xt_col"] = st.color_picker(t("color_xt"), "#000000", key="xt_col")
+
+# ---- 自定义图例文字
+with sb.expander(t("sec_leg_text")):
+    p["custom_legends"] = []
+    for k, name in enumerate(dfs):
+        stem = Path(name).stem
+        if p["dual"]:
+            l_val = st.text_input(t("leg_text_left", name=stem), key=f"leg_l_{name}_{p['dual']}")
+            r_val = st.text_input(t("leg_text_right", name=stem), key=f"leg_r_{name}_{p['dual']}")
+            p["custom_legends"].append((l_val.strip(), r_val.strip()))
+        else:
+            val = st.text_input(t("leg_text_single", name=stem), key=f"leg_s_{name}_{p['dual']}")
+            p["custom_legends"].append((val.strip(), ""))
 
 # ---- 轴标签
 with sb.expander(t("sec_labels")):
