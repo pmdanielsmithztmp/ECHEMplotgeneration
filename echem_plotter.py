@@ -1,7 +1,7 @@
 """电化学论文曲线图生成器 / 電気化学 論文用グラフ作成ツール
 
 运行 / 実行:
-    pip install streamlit numpy pandas scipy matplotlib openpyxl
+    pip install streamlit numpy pandas scipy matplotlib openpyxl google-genai plotly
     streamlit run echem_plotter.py
 """
 import hashlib
@@ -28,13 +28,12 @@ try:
     import plotly.graph_objects as go
 
     HAS_PLOTLY = True
-except ImportError:  # 没装 plotly 时，交互查看会提示安装，其余功能不受影响
+except ImportError:
     HAS_PLOTLY = False
 
 MM = 1 / 25.4
 COLORS = ["#0072B2", "#D55E00", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#000000"]
 CUR = {"A": 1.0, "mA": 1e-3, "µA": 1e-6, "nA": 1e-9}
-# 参比电极列表：已将 Hg/Hg2SO4 修改为 Unicode 下角标格式 Hg/Hg₂SO₄
 REF = {"Ag/AgCl (sat. KCl)": 0.197, "SCE": 0.241, "Hg/HgO (1 M NaOH)": 0.098, "Hg/Hg₂SO₄": 0.615}
 FITS = {
     "CV": ["none", "linear", "poly"],
@@ -44,8 +43,7 @@ FITS = {
 MIME = {"png": "image/png", "pdf": "application/pdf", "svg": "image/svg+xml", "tiff": "image/tiff"}
 SIDES = ["bottom", "left", "top", "right"]
 
-# 字体：英文 Times New Roman；日文汉字/假名用明朝体；中文汉字用宋体作为后备。
-# matplotlib 会逐字符回退：Latin 字符取前面的 Times，找不到的字符再依次取后面的明朝/宋体。
+# 字体设置
 _LATIN = ["Times New Roman", "Liberation Serif", "Nimbus Roman", "TeX Gyre Termes", "STIXGeneral"]
 _CJK = [
     "Yu Mincho", "MS Mincho", "MS PMincho", "Hiragino Mincho ProN", "IPAexMincho", "IPAMincho",
@@ -89,6 +87,7 @@ TR = {
         "color_xt": "上方 x 轴颜色",
         "kind_cur": "电流（做单位换算）",
         "kind_pot": "电位（做参比换算）",
+        "kind_time": "时间（不换算）",
         "kind_other": "其他（不换算）",
         "sec_units": "单位与参比",
         "cur_raw": "原始电流单位",
@@ -272,6 +271,7 @@ TR = {
         "color_xt": "上部 x 軸の色",
         "kind_cur": "電流（単位換算あり）",
         "kind_pot": "電位（参照電極換算あり）",
+        "kind_time": "時間（換算なし）",
         "kind_other": "その他（換算しない）",
         "sec_units": "単位と参照電極",
         "cur_raw": "元の電流単位",
@@ -360,6 +360,10 @@ TR = {
         "yc_custom": "カスタム",
         "color_yl": "左 y 軸の色",
         "color_yr": "右 y 軸の色",
+        "sec_leg_text": "凡例テキストの変更（空欄でデフォルト）",
+        "leg_text_single": "{name} の凡例",
+        "leg_text_left": "{name} (左軸) 凡例",
+        "leg_text_right": "{name} (右軸) 凡例",
         "sec_labels": "軸ラベル（空欄で自動）",
         "lab_x": "x 軸ラベル",
         "lab_x2": "上部 x 軸ラベル (x2)",
@@ -367,12 +371,12 @@ TR = {
         "lab_y2": "右 y 軸ラベル",
         "lab_help": "上付き：`cm$^{-2}$`、下付き：`H$_2$O$_2$`、斜体の変数と添字：`$E_{pa}$`、ギリシャ文字：`$\\mu$A`。$ は必ず対にし、添字が複数文字のときは {} で囲みます。漢字を含むラベルでは添字が Unicode 文字に自動変換されるため、大文字の下付きは使えません。",
         "sec_ai": "AI 分析",
-        "ai_intro": "処理後のデータの要約（ピーク位置、フィットのパラメータ、統計量など）を ChatGPT に送り、解釈してもらいます。送るのは要約で、元のデータファイルではありません。送信前に下で内容を確認できます。",
-        "ai_warn": "AI の解釈は誤っていることがあります。参考程度にとどめ、元のデータや文献と照らして確認してください。送信内容は OpenAI のサーバーを経由します。未発表のデータの扱いにはご注意ください。",
-        "ai_key": "OpenAI API キー",
+        "ai_intro": "処理後のデータの要約（ピーク位置、フィットのパラメータ、統計量など）を Gemini に送り、解釈してもらいます。送るのは要約で、元のデータファイルではありません。送信前に下で内容を確認できます。",
+        "ai_warn": "AI の解釈は誤っていることがあります。参考程度にとどめ、元のデータや文献と照らして確認してください。送信内容は Google のサーバーを経由します。未発表のデータの扱いにはご注意ください。",
+        "ai_key": "API キー",
         "ai_key_help": "今回の利用中だけメモリ上に保持し、ファイルには書き込みません。キーをコードに書いたり、GitHub にアップロードしたりしないでください。",
         "ai_model": "モデル",
-        "ai_model_help": "OpenAI 公式のモデル名を入力します。モデルが存在しないと表示された場合は、公式ドキュメントのモデル一覧で現在使える名前を確認してください。",
+        "ai_model_help": "Google Gemini API のモデル名を入力します。デフォルトは gemini-3.8-flash です。",
         "ai_ctx": "実験の背景（任意）",
         "ai_ctx_ph": "例：多孔質金電極、0.1 M PBS、グルコース検出",
         "ai_scan": "掃引速度 / mV s⁻¹（CV・任意）",
@@ -382,7 +386,7 @@ TR = {
         "ai_btn": "AI 分析を実行",
         "ai_spin": "AI が分析中……",
         "ai_nokey": "先にサイドバーの「AI 分析」で API キーを入力してください。",
-        "ai_nopkg": "openai パッケージがありません。pip install openai を実行してください。",
+        "ai_nopkg": "google-genai パッケージがありません。pip install google-genai を実行してください。",
         "ai_fail": "AI の呼び出しに失敗しました：{err}",
         "ai_stale": "（この分析は以前のデータと設定で作られたものです。設定を変えたら再実行してください。）",
         "sec_peaks": "CV ピーク解析",
@@ -421,6 +425,13 @@ TR = {
 }
 
 
+# ---------------------------------------------------------------- 安全多语言获取函数
+def t(key, **kw):
+    # 优先找当前语言；找不到则自动退回中文；中文也没有则显示 key 本身，彻底杜绝 KeyError 导致的崩溃
+    s = TR.get(lang, {}).get(key) or TR.get("zh", {}).get(key, key)
+    return s.format(**kw) if kw else s
+
+
 # ---------------------------------------------------------------- 数据读取
 def _tokens(line):
     return [t for t in re.split(r"[,\t; ]+", line.strip()) if t]
@@ -442,10 +453,6 @@ def _has_kana(s):
 
 
 def decode_bytes(raw: bytes, enc: str, pref: str) -> str:
-    """字节 → 文本。
-    auto：先试 UTF-8；否则在 GBK 和 Shift-JIS 都能解码时，用假名和 GB2312 字符集做判断，
-    仍无法区分时按界面语言优先。判断错了可以在侧边栏手动选编码。
-    """
     if enc != "auto":
         return raw.decode(enc, errors="replace")
     try:
@@ -465,7 +472,7 @@ def decode_bytes(raw: bytes, enc: str, pref: str) -> str:
         if _has_kana(sj):
             return sj
         try:
-            gb.encode("gb2312")  # 全是常用简体字 → 基本可以确定是 GBK
+            gb.encode("gb2312")
             return gb
         except UnicodeEncodeError:
             return sj
@@ -477,7 +484,6 @@ def decode_bytes(raw: bytes, enc: str, pref: str) -> str:
 
 
 def parse_table(raw: bytes, enc: str = "auto", pref: str = "zh") -> pd.DataFrame:
-    """解析仪器导出的文本：自动跳过文件头，取数据块上方一行作为列名。"""
     text = decode_bytes(raw, enc, pref)
     lines = text.splitlines()
     i0 = next((i for i, l in enumerate(lines) if _is_num_line(l)), None)
@@ -487,9 +493,9 @@ def parse_table(raw: bytes, enc: str = "auto", pref: str = "zh") -> pd.DataFrame
     rows, i = [], i0
     while i < len(lines) and (not lines[i].strip() or _is_num_line(lines[i])):
         if lines[i].strip():
-            t = _tokens(lines[i])
-            if len(t) == n:
-                rows.append([float(v) for v in t])
+            t_toks = _tokens(lines[i])
+            if len(t_toks) == n:
+                rows.append([float(v) for v in t_toks])
         i += 1
     names = [f"col{k}" for k in range(n)]
     for j in range(i0 - 1, -1, -1):
@@ -509,7 +515,6 @@ def load_file(name: str, raw: bytes, enc: str, pref: str) -> pd.DataFrame:
 
 
 def make_demo(mode):
-    """内置示例数据（合成），方便没有文件时试用。"""
     rng = np.random.default_rng(0)
     if mode == "CV":
         e = np.concatenate([np.linspace(-0.2, 0.6, 400), np.linspace(0.6, -0.2, 400)])
@@ -553,7 +558,6 @@ def transform_y2(y2, kind, p):
 
 
 def hampel(y, window=7, n_sigma=3.0):
-    """Hampel 滤波：偏离滚动中位数超过 n_sigma × MAD 的点视为坏点。"""
     s = pd.Series(y)
     med = s.rolling(window, center=True, min_periods=1).median()
     mad = (s - med).abs().rolling(window, center=True, min_periods=1).median()
@@ -562,7 +566,6 @@ def hampel(y, window=7, n_sigma=3.0):
 
 
 def smooth_1d(y, method, win, poly, sigma):
-    """对一条（已剔除坏点的）曲线做平滑。"""
     n = len(y)
     if method == "none" or n < 5:
         return y
@@ -606,15 +609,12 @@ def parse_float(s):
     return float(s) if s else None
 
 
-# ---------------------------------------------------------------- 本地分析（发给 AI 的数字都由这里算出）
 def _sig(v, n=4):
-    """保留 n 位有效数字，避免把一长串小数发出去。"""
     v = float(v)
     return float(f"{v:.{n}g}") if np.isfinite(v) else None
 
 
 def cv_summary(x, y, keep):
-    """按电位扫描方向切段，在正向段找氧化峰、负向段找还原峰。峰电流未做基线校正。"""
     xs, ys = x[keep], y[keep]
     n = len(xs)
     if n < 30:
@@ -649,7 +649,6 @@ def cv_summary(x, y, keep):
 
 
 def trace_summary(x, y, keep):
-    """CA / CP 的基本统计量：起止值、范围、噪声估计、后半段斜率。"""
     xs, ys = x[keep], y[keep]
     n = len(xs)
     if n < 10:
@@ -676,7 +675,6 @@ def downsample(x, y, keep, n=60):
 
 
 def get_api_key(typed):
-    """优先使用页面输入的密钥；否则读取 Streamlit secrets 或环境变量。"""
     if typed.strip():
         return typed.strip()
     try:
@@ -702,7 +700,6 @@ AI_LANG = {"zh": "Simplified Chinese", "ja": "Japanese"}
 
 
 def call_gemini(api_key, model, system, user_text, max_tokens=1500):
-    """通过 Gemini API 进行电化学数据解读。"""
     from google import genai
     from google.genai import types
 
@@ -752,12 +749,12 @@ def do_fit(x, y, kind, deg):
     return func, names, vals, err, r2
 
 
-# ---------------------------------------------------------------- 绘图
+# ---------------------------------------------------------------- 绘图样式
 def set_style(p):
     fs = p["fs"]
     plt.rcParams.update(
         {
-            "font.family": FONTS,  # 字体名列表：matplotlib 逐字符依次回退（单写 "serif" 只会取第一个字体）
+            "font.family": FONTS,
             "mathtext.fontset": "stix",
             "mathtext.default": "regular",
             "font.size": fs,
@@ -776,8 +773,6 @@ def set_style(p):
     )
 
 
-# matplotlib 的数学公式（$...$）不支持中日文逐字回退，所以标签里同时有汉字和 $...$ 时，
-# 把上下标和常用希腊字母改成 Unicode 字符（cm$^{-2}$ → cm⁻²），汉字就能正常显示。
 _SUP = str.maketrans(
     {
         **dict(zip("0123456789+-=()", "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾")),
@@ -803,7 +798,7 @@ def _uni_math(m):
     body = m.group(1).replace("\\mathrm", "").replace("\\,", " ")
     body = body.replace("^\\circ", "°").replace("^{\\circ}", "°")
     for k in sorted(_GREEK, key=len, reverse=True):
-        body = re.sub(re.escape(k) + r"(?![A-Za-z]) ?", lambda _m, v=_GREEK[k]: v, body)  # LaTeX 命令后的空格不显示
+        body = re.sub(re.escape(k) + r"(?![A-Za-z]) ?", lambda _m, v=_GREEK[k]: v, body)
     body = re.sub(r"\^\{([^}]*)\}|\^(\S)", lambda g: (g.group(1) or g.group(2)).translate(_SUP), body)
     body = re.sub(r"_\{([^}]*)\}|_(\S)", lambda g: (g.group(1) or g.group(2)).translate(_SUB), body)
     return body.replace("{", "").replace("}", "")
@@ -816,7 +811,6 @@ def cjk_safe(label):
 
 
 def pretty(colname):
-    """'Charge/C' -> 'Charge / C'，'Time/sec' -> 'Time / s'"""
     s = re.sub(r"/\s*sec\b", "/s", str(colname))
     return re.sub(r"\s*/\s*", " / ", s).strip()
 
@@ -858,7 +852,6 @@ def y2_label(p, y2kind, y2name):
 def apply_ticks(ax, ax2, ax3, p):
     tm, tn, d = p["tick_marks"], p["tick_nums"], p["tick_dir"]
     ax.tick_params(axis="both", which="both", direction=d)
-    # 如果启用了 ax3，底部 x 轴顶端的刻度和标签就不画，留给 ax3 控制
     top_marks = tm["top"] if not ax3 else False
     top_nums = tn["top"] if not ax3 else False
     
@@ -995,7 +988,7 @@ def build_fig(results, mode, p, show_removed):
         if step is None or not a:
             return
         lo, hi = a.get_xlim() if axis == "x" else a.get_ylim()
-        if abs(hi - lo) / step > 200:  # 间隔太小会画出成百上千条刻度，直接忽略
+        if abs(hi - lo) / step > 200:
             skipped.append(axis)
             return
         (a.xaxis if axis == "x" else a.yaxis).set_major_locator(MultipleLocator(step))
@@ -1020,13 +1013,11 @@ def build_fig(results, mode, p, show_removed):
     return fig
 
 
-# ---------------------------------------------------------------- 交互查看（Plotly）与数据表
+# ---------------------------------------------------------------- Plotly 交互图表
 PLOTLY_FONT = "Times New Roman, Yu Mincho, MS Mincho, Hiragino Mincho ProN, serif"
 
 
 def html_label(s):
-    """把 $^{-2}$ 这类写法转成 Plotly 能显示的 <sup>/<sub>。"""
-
     def conv(m):
         body = m.group(1).replace("\\mathrm", "").replace("\\,", " ")
         for k in sorted(_GREEK, key=len, reverse=True):
@@ -1039,7 +1030,6 @@ def html_label(s):
 
 
 def plain_label(s):
-    """给 CSV 表头用：把 $...$ 換成 Unicode 上下标。"""
     return re.sub(r"\$([^$]*)\$", _uni_math, s)
 
 
@@ -1188,7 +1178,6 @@ def processed_frame(r, mode, p, only_kept):
 def export_bytes(fig, fmt, dpi):
     buf = io.BytesIO()
     kw = {"pil_kwargs": {"compression": "tiff_lzw"}} if fmt == "tiff" else {}
-    # 图中含中日文字符时，SVG 把文字转成轮廓，避免在没有明朝体的电脑上换字体
     text = "".join(t.get_text() for t in fig.findobj(matplotlib.text.Text))
     cjk = any(ord(c) >= 0x2E80 for c in text)
     with plt.rc_context({"svg.fonttype": "path" if cjk else "none"}):
@@ -1200,12 +1189,6 @@ def export_bytes(fig, fmt, dpi):
 st.set_page_config(page_title="Echem Plotter", layout="wide")
 sb = st.sidebar
 lang = sb.radio("语言 / 言語", ["zh", "ja"], format_func={"zh": "中文", "ja": "日本語"}.get, horizontal=True, key="lang")
-
-
-def t(key, **kw):
-    s = TR[lang][key]
-    return s.format(**kw) if kw else s
-
 
 st.title(t("title"))
 mode = sb.radio(t("mode_label"), ["CV", "CA", "CP"], format_func=lambda m: t("mode_" + m), key="mode")
@@ -1248,7 +1231,7 @@ p_start = c1.number_input(t("start"), min_value=0, value=0, step=1, key="start")
 p_end = c2.number_input(t("end"), min_value=0, value=0, step=1, key="end")
 p["x_to_min"] = sb.checkbox(t("x_to_min"), key="x_to_min")
 
-# ---- 双 y 轴 / 双 x 轴
+# ---- 双 y 轴 / 双 x 轴（同等待遇设置）
 sb.subheader(t("sec_dual"))
 p["dual"] = sb.checkbox(t("dual"), key="dual")
 p["dual_x"] = sb.checkbox(t("dual_x"), key="dual_x")
@@ -1433,7 +1416,7 @@ with sb.expander(t("sec_ai")):
     ai_q = st.text_area(t("ai_q"), key="ai_q", height=70)
     ai_curve = st.checkbox(t("ai_sendcurve"), key="ai_curve")
 
-# ---------------------------------------------------------------- 处理
+# ---------------------------------------------------------------- 处理逻辑
 try:
     bad_idx = parse_idx(ex_idx)
     bad_ranges = parse_ranges(ex_range)
@@ -1495,7 +1478,6 @@ for name, df in dfs.items():
                 new_x_kept[i] = new_x_kept[i-1] + step
             x[keep] = new_x_kept
 
-    # 平滑（只作用于保留下来的点）
     y, y2 = y_raw.copy(), (y2_raw.copy() if y2_raw is not None else None)
     if p["sm_method"] != "none":
         y[keep] = smooth_1d(y_raw[keep], p["sm_method"], sm_win, sm_poly, sm_sigma)
@@ -1565,7 +1547,7 @@ for r in results:
 for r, a in zip(results, analysis):
     r["peaks"] = a.get("cv_peaks")
 
-# ---------------------------------------------------------------- 输出
+# ---------------------------------------------------------------- 输出与视图渲染
 left, right = st.columns([3, 2])
 with left:
     tab_s, tab_i, tab_t = st.tabs([t("tab_static"), t("tab_inter"), t("tab_table")])
@@ -1674,7 +1656,7 @@ if st.button(t("ai_btn"), type="primary", key="ai_go"):
         st.error(t("ai_nokey"))
     else:
         try:
-            import google.genai  # noqa: F401
+            import google.genai
         except ImportError:
             st.error(t("ai_nopkg"))
         else:
