@@ -172,12 +172,12 @@ TR = {
         "lab_y2": "右 y 轴标签",
         "lab_help": "上标：`cm$^{-2}$`；下标：`H$_2$O$_2$`；斜体变量加下标：`$E_{pa}$`；希腊字母：`$\\mu$A`。$ 必须成对，上下标有多个字符时用 {} 括起来。含汉字时，上下标会自动换成 Unicode 字符，此时大写字母的下标不支持。",
         "sec_ai": "AI 分析",
-        "ai_intro": "把处理后的数据摘要（峰位、拟合参数、统计量等）发给 Claude，让它帮你解读。发送的是摘要，不是原始数据文件；发送前可以在下面展开查看具体内容。",
-        "ai_warn": "AI 的解读可能有误，仅供参考，请对照原始数据和文献自行核对。发送的内容会经过 Anthropic 的服务器，未发表的数据请先想清楚是否介意。",
-        "ai_key": "Anthropic API 密钥",
+        "ai_intro": "把处理后的数据摘要（峰位、拟合参数、统计量等）发给 ChatGPT，让它帮你解读。发送的是摘要，不是原始数据文件；发送前可以在下面展开查看具体内容。",
+        "ai_warn": "AI 的解读可能有误，仅供参考，请对照原始数据和文献自行核对。发送的内容会经过 OpenAI 的服务器，未发表的数据请先想清楚是否介意。",
+        "ai_key": "OpenAI API 密钥",
         "ai_key_help": "只在本次使用中保存在内存里，不会写入文件。不要把密钥写进代码，也不要上传到 GitHub。",
         "ai_model": "模型",
-        "ai_model_help": "填 Anthropic 官方的模型名。如果提示模型不存在，请到官方文档的模型列表里查当前可用的名称。",
+        "ai_model_help": "填 OpenAI 官方的模型名。如果提示模型不存在，请到官方文档的模型列表里查当前可用的名称。",
         "ai_ctx": "实验背景（可选）",
         "ai_ctx_ph": "例如：多孔金电极，0.1 M PBS，检测葡萄糖",
         "ai_scan": "扫速 / mV s⁻¹（CV，可选）",
@@ -187,7 +187,7 @@ TR = {
         "ai_btn": "生成 AI 分析",
         "ai_spin": "AI 分析中……",
         "ai_nokey": "请先在侧边栏的“AI 分析”里填写 API 密钥。",
-        "ai_nopkg": "没有安装 anthropic 包，请运行：pip install anthropic",
+        "ai_nopkg": "没有安装 openai 包，请运行：pip install openai",
         "ai_fail": "AI 调用失败：{err}",
         "ai_stale": "（这条分析是按之前的数据和设置生成的，改过参数后请重新生成。）",
         "sec_peaks": "CV 峰分析",
@@ -340,12 +340,12 @@ TR = {
         "lab_y2": "右 y 軸ラベル",
         "lab_help": "上付き：`cm$^{-2}$`、下付き：`H$_2$O$_2$`、斜体の変数と添字：`$E_{pa}$`、ギリシャ文字：`$\\mu$A`。$ は必ず対にし、添字が複数文字のときは {} で囲みます。漢字を含むラベルでは添字が Unicode 文字に自動変換されるため、大文字の下付きは使えません。",
         "sec_ai": "AI 分析",
-        "ai_intro": "処理後のデータの要約（ピーク位置、フィットのパラメータ、統計量など）を Claude に送り、解釈してもらいます。送るのは要約で、元のデータファイルではありません。送信前に下で内容を確認できます。",
-        "ai_warn": "AI の解釈は誤っていることがあります。参考程度にとどめ、元のデータや文献と照らして確認してください。送信内容は Anthropic のサーバーを経由します。未発表のデータの扱いにはご注意ください。",
-        "ai_key": "Anthropic API キー",
+        "ai_intro": "処理後のデータの要約（ピーク位置、フィットのパラメータ、統計量など）を ChatGPT に送り、解釈してもらいます。送るのは要約で、元のデータファイルではありません。送信前に下で内容を確認できます。",
+        "ai_warn": "AI の解釈は誤っていることがあります。参考程度にとどめ、元のデータや文献と照らして確認してください。送信内容は OpenAI のサーバーを経由します。未発表のデータの扱いにはご注意ください。",
+        "ai_key": "OpenAI API キー",
         "ai_key_help": "今回の利用中だけメモリ上に保持し、ファイルには書き込みません。キーをコードに書いたり、GitHub にアップロードしたりしないでください。",
         "ai_model": "モデル",
-        "ai_model_help": "Anthropic 公式のモデル名を入力します。モデルが存在しないと表示された場合は、公式ドキュメントのモデル一覧で現在使える名前を確認してください。",
+        "ai_model_help": "OpenAI 公式のモデル名を入力します。モデルが存在しないと表示された場合は、公式ドキュメントのモデル一覧で現在使える名前を確認してください。",
         "ai_ctx": "実験の背景（任意）",
         "ai_ctx_ph": "例：多孔質金電極、0.1 M PBS、グルコース検出",
         "ai_scan": "掃引速度 / mV s⁻¹（CV・任意）",
@@ -355,7 +355,7 @@ TR = {
         "ai_btn": "AI 分析を実行",
         "ai_spin": "AI が分析中……",
         "ai_nokey": "先にサイドバーの「AI 分析」で API キーを入力してください。",
-        "ai_nopkg": "anthropic パッケージがありません。pip install anthropic を実行してください。",
+        "ai_nopkg": "openai パッケージがありません。pip install openai を実行してください。",
         "ai_fail": "AI の呼び出しに失敗しました：{err}",
         "ai_stale": "（この分析は以前のデータと設定で作られたものです。設定を変えたら再実行してください。）",
         "sec_peaks": "CV ピーク解析",
@@ -653,10 +653,10 @@ def get_api_key(typed):
     if typed.strip():
         return typed.strip()
     try:
-        k = st.secrets.get("ANTHROPIC_API_KEY", "")
+        k = st.secrets.get("OPENAI_API_KEY", "")
     except Exception:
         k = ""
-    return k or os.environ.get("ANTHROPIC_API_KEY", "")
+    return k or os.environ.get("OPENAI_API_KEY", "")
 
 
 AI_SYSTEM = (
@@ -674,14 +674,18 @@ AI_SYSTEM = (
 AI_LANG = {"zh": "Simplified Chinese", "ja": "Japanese"}
 
 
-def call_claude(api_key, model, system, user_text, max_tokens=1500):
-    import anthropic
+def call_openai(api_key, model, system, user_text, max_tokens=1500):
+    """通过 OpenAI Responses API 调用 GPT 模型进行电化学数据解读。"""
+    from openai import OpenAI
 
-    client = anthropic.Anthropic(api_key=api_key)
-    msg = client.messages.create(
-        model=model, max_tokens=max_tokens, system=system, messages=[{"role": "user", "content": user_text}], timeout=90
+    client = OpenAI(api_key=api_key, timeout=90)
+    response = client.responses.create(
+        model=model,
+        instructions=system,
+        input=user_text,
+        max_output_tokens=max_tokens,
     )
-    return "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
+    return response.output_text or ""
 
 
 # ---------------------------------------------------------------- 拟合
@@ -1285,7 +1289,7 @@ with sb.expander(t("sec_labels")):
 # ---- AI 分析设置
 with sb.expander(t("sec_ai")):
     ai_key_typed = st.text_input(t("ai_key"), type="password", key="ai_key", help=t("ai_key_help"))
-    ai_model = st.text_input(t("ai_model"), value="claude-sonnet-5-5", key="ai_model", help=t("ai_model_help"))
+    ai_model = st.text_input(t("ai_model"), value="chat-latest", key="ai_model", help=t("ai_model_help"))
     ai_ctx = st.text_area(t("ai_ctx"), key="ai_ctx", placeholder=t("ai_ctx_ph"), height=80)
     ai_scan = st.text_input(t("ai_scan"), key="ai_scan") if mode == "CV" else ""
     ai_q = st.text_area(t("ai_q"), key="ai_q", height=70)
@@ -1504,13 +1508,13 @@ if st.button(t("ai_btn"), type="primary", key="ai_go"):
         st.error(t("ai_nokey"))
     else:
         try:
-            import anthropic  # noqa: F401
+            import openai  # noqa: F401
         except ImportError:
             st.error(t("ai_nopkg"))
         else:
             try:
                 with st.spinner(t("ai_spin")):
-                    text = call_claude(api_key, ai_model.strip(), system_text, user_text)
+                    text = call_openai(api_key, ai_model.strip(), system_text, user_text)
                 st.session_state["ai_result"] = (sig_now, text)
             except Exception as e:
                 st.error(t("ai_fail", err=f"{type(e).__name__}: {str(e)[:300]}"))
