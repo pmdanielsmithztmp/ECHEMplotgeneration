@@ -34,7 +34,8 @@ except ImportError:  # 没装 plotly 时，交互查看会提示安装，其余�
 MM = 1 / 25.4
 COLORS = ["#0072B2", "#D55E00", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#000000"]
 CUR = {"A": 1.0, "mA": 1e-3, "µA": 1e-6, "nA": 1e-9}
-REF = {"Ag/AgCl (sat. KCl)": 0.197, "SCE": 0.241, "Hg/HgO (1 M NaOH)": 0.098}
+# 参比电极列表：已将 Hg/Hg2SO4 修改为 Unicode 下角标格式 Hg/Hg₂SO₄
+REF = {"Ag/AgCl (sat. KCl)": 0.197, "SCE": 0.241, "Hg/HgO (1 M NaOH)": 0.098, "Hg/Hg₂SO₄": 0.615}
 FITS = {
     "CV": ["none", "linear", "poly"],
     "CA": ["none", "cottrell", "exp", "linear", "poly"],
@@ -77,8 +78,10 @@ TR = {
         "ycol": "y 列（左轴）",
         "start": "起始行",
         "end": "结束行（0=到末尾）",
-        "sec_dual": "双 y 轴（右轴）",
-        "dual": "启用右侧第二个 y 轴",
+        "x_to_min": "x 轴时间转换为分钟 (÷60)",
+        "sec_dual": "双轴设置 (x2 / y2)",
+        "dual": "启用右侧第二个 y 轴 (y2)",
+        "dual_x": "启用上方第二个 x 轴 (x2)",
         "y2col": "右轴数据列",
         "y2kind": "右轴的物理量类型",
         "kind_cur": "电流（做单位换算）",
@@ -100,6 +103,7 @@ TR = {
         "nsig": "阈值（σ）",
         "ex_range": "按 x 范围剔除（图上坐标，如 0.1:0.2; 5:6）",
         "ex_idx": "按行号剔除（如 5, 10-12）",
+        "reset_idx": "剔除点后坐标/序号自动递补归零",
         "sec_smooth": "平滑",
         "sm_method": "平滑方法",
         "sm_none": "不平滑",
@@ -130,6 +134,7 @@ TR = {
         "fontsize": "字号 / pt",
         "scatter": "以散点显示数据",
         "legend": "显示图例",
+        "legend_loc": "图例位置",
         "sec_range": "坐标轴范围（留空为自动）",
         "xmin": "x 最小",
         "xmax": "x 最大",
@@ -137,11 +142,14 @@ TR = {
         "ymax": "y 最大",
         "y2min": "右 y 最小",
         "y2max": "右 y 最大",
+        "x2min": "上方 x2 最小",
+        "x2max": "上方 x2 最大",
         "warn_num": "坐标轴范围和刻度间隔需要填写数字，间隔要大于 0。",
         "step_title": "主刻度间隔（留空为自动）",
         "stepx": "x 间隔",
         "stepy": "y 间隔",
         "stepy2": "右 y 间隔",
+        "stepx2": "上方 x 间隔",
         "warn_step": "主刻度间隔太小，会产生过多刻度，这一项已被忽略。",
         "lab_note": "**上下角标的写法**：用 `$` 括住要变角标的部分，`^` 表示上标，`_` 表示下标，多个字符用 `{}` 括起来。  \n例：`cm$^{-2}$` → cm⁻²；`H$_2$O$_2$` → H₂O₂；`$E_{pa}$` → E 加下标 pa；`$\\mu$A` → µA。  \n注意：`$` 要成对，符号必须是英文半角。含汉字的标签里，角标会自动换成 Unicode 字符，大写字母的下标不支持。",
         "sec_ticks": "刻度显示",
@@ -168,16 +176,17 @@ TR = {
         "color_yr": "右 y 轴颜色",
         "sec_labels": "坐标轴标签（留空为自动）",
         "lab_x": "x 轴标签",
+        "lab_x2": "上方 x 轴标签 (x2)",
         "lab_y": "左 y 轴标签",
         "lab_y2": "右 y 轴标签",
         "lab_help": "上标：`cm$^{-2}$`；下标：`H$_2$O$_2$`；斜体变量加下标：`$E_{pa}$`；希腊字母：`$\\mu$A`。$ 必须成对，上下标有多个字符时用 {} 括起来。含汉字时，上下标会自动换成 Unicode 字符，此时大写字母的下标不支持。",
         "sec_ai": "AI 分析",
-        "ai_intro": "把处理后的数据摘要（峰位、拟合参数、统计量等）发给 ChatGPT，让它帮你解读。发送的是摘要，不是原始数据文件；发送前可以在下面展开查看具体内容。",
-        "ai_warn": "AI 的解读可能有误，仅供参考，请对照原始数据和文献自行核对。发送的内容会经过 OpenAI 的服务器，未发表的数据请先想清楚是否介意。",
-        "ai_key": "OpenAI API 密钥",
+        "ai_intro": "把处理后的数据摘要（峰位、拟合参数、统计量等）发给 Gemini，让它帮你解读。发送的是摘要，不是原始数据文件；发送前可以在下面展开查看具体内容。",
+        "ai_warn": "AI 的解读可能有误，仅供参考，请对照原始数据和文献自行核对。发送的内容会经过 Google 的服务器，未发表的数据请谨慎处理。",
+        "ai_key": " API 密钥",
         "ai_key_help": "只在本次使用中保存在内存里，不会写入文件。不要把密钥写进代码，也不要上传到 GitHub。",
         "ai_model": "模型",
-        "ai_model_help": "填 OpenAI 官方的模型名。如果提示模型不存在，请到官方文档的模型列表里查当前可用的名称。",
+        "ai_model_help": "填写 Google Gemini API 的模型名称。当前默认模型为 gemini-3.8-flash。",
         "ai_ctx": "实验背景（可选）",
         "ai_ctx_ph": "例如：多孔金电极，0.1 M PBS，检测葡萄糖",
         "ai_scan": "扫速 / mV s⁻¹（CV，可选）",
@@ -187,7 +196,7 @@ TR = {
         "ai_btn": "生成 AI 分析",
         "ai_spin": "AI 分析中……",
         "ai_nokey": "请先在侧边栏的“AI 分析”里填写 API 密钥。",
-        "ai_nopkg": "没有安装 openai 包，请运行：pip install openai",
+        "ai_nopkg": "没有安装 google-genai 包，请运行：pip install google-genai",
         "ai_fail": "AI 调用失败：{err}",
         "ai_stale": "（这条分析是按之前的数据和设置生成的，改过参数后请重新生成。）",
         "sec_peaks": "CV 峰分析",
@@ -245,8 +254,10 @@ TR = {
         "ycol": "y 列（左軸）",
         "start": "開始行",
         "end": "終了行（0=最後まで）",
-        "sec_dual": "二軸（右 y 軸）",
-        "dual": "右側に第2の y 軸を使う",
+        "x_to_min": "x軸の時間を分に変換 (÷60)",
+        "sec_dual": "二軸の設定 (x2 / y2)",
+        "dual": "右側に第2の y 軸を使う (y2)",
+        "dual_x": "上部に第2の x 軸を使う (x2)",
         "y2col": "右軸のデータ列",
         "y2kind": "右軸の物理量の種類",
         "kind_cur": "電流（単位換算あり）",
@@ -268,6 +279,7 @@ TR = {
         "nsig": "しきい値（σ）",
         "ex_range": "x 範囲で除外（グラフ上の座標。例 0.1:0.2; 5:6）",
         "ex_idx": "行番号で除外（例 5, 10-12）",
+        "reset_idx": "除外後、座標と行番号をゼロから再配置",
         "sec_smooth": "平滑化",
         "sm_method": "平滑化の方法",
         "sm_none": "平滑化しない",
@@ -298,6 +310,7 @@ TR = {
         "fontsize": "文字サイズ / pt",
         "scatter": "データを点で表示",
         "legend": "凡例を表示",
+        "legend_loc": "凡例の位置",
         "sec_range": "軸の範囲（空欄で自動）",
         "xmin": "x 最小",
         "xmax": "x 最大",
@@ -305,11 +318,14 @@ TR = {
         "ymax": "y 最大",
         "y2min": "右 y 最小",
         "y2max": "右 y 最大",
+        "x2min": "上部 x2 最小",
+        "x2max": "上部 x2 最大",
         "warn_num": "軸の範囲と目盛りの間隔には数値を入力してください（間隔は 0 より大きい値）。",
         "step_title": "主目盛りの間隔（空欄で自動）",
         "stepx": "x 間隔",
         "stepy": "y 間隔",
         "stepy2": "右 y 間隔",
+        "stepx2": "上部 x 間隔",
         "warn_step": "主目盛りの間隔が小さすぎて目盛りが多くなりすぎるため、この設定は無視しました。",
         "lab_note": "**上付き・下付きの書き方**：添字にしたい部分を `$` で囲み、`^` が上付き、`_` が下付きです。複数文字のときは `{}` で囲みます。  \n例：`cm$^{-2}$` → cm⁻²、`H$_2$O$_2$` → H₂O₂、`$E_{pa}$` → E に下付き pa、`$\\mu$A` → µA。  \n注意：`$` は必ず対にし、記号は半角の英数字を使います。漢字を含むラベルでは添字が Unicode 文字に自動変換されるため、大文字の下付きは使えません。",
         "sec_ticks": "目盛りの表示",
@@ -328,7 +344,7 @@ TR = {
         "color_left": "{name} 左軸の曲線の色",
         "color_right": "{name} 右軸の曲線の色",
         "color_fit": "フィット線の色",
-        "yaxis_color": "y 軸の色（ラベル・目盛り・軸線）",
+        "yaxis_color": "y 轴の色（ラベル・目盛り・軸線）",
         "yc_black": "黒",
         "yc_follow": "曲線の色に合わせる",
         "yc_custom": "カスタム",
@@ -336,6 +352,7 @@ TR = {
         "color_yr": "右 y 軸の色",
         "sec_labels": "軸ラベル（空欄で自動）",
         "lab_x": "x 軸ラベル",
+        "lab_x2": "上部 x 軸ラベル (x2)",
         "lab_y": "左 y 軸ラベル",
         "lab_y2": "右 y 軸ラベル",
         "lab_help": "上付き：`cm$^{-2}$`、下付き：`H$_2$O$_2$`、斜体の変数と添字：`$E_{pa}$`、ギリシャ文字：`$\\mu$A`。$ は必ず対にし、添字が複数文字のときは {} で囲みます。漢字を含むラベルでは添字が Unicode 文字に自動変換されるため、大文字の下付きは使えません。",
@@ -645,18 +662,18 @@ def trace_summary(x, y, keep):
 def downsample(x, y, keep, n=60):
     xs, ys = x[keep], y[keep]
     idx = np.linspace(0, len(xs) - 1, min(n, len(xs))).astype(int)
-    return [[_sig(a), _sig(b)] for a, b in zip(xs[idx], ys[idx])]
+    return [[_sig(a), _sig(b)] for a, b in zip(xs[idx], idx)]
 
 
 def get_api_key(typed):
-    """优先用页面里填的密钥；没有则读服务器的 secrets / 环境变量（部署者自己的密钥）。"""
+    """优先使用页面输入的密钥；否则读取 Streamlit secrets 或环境变量。"""
     if typed.strip():
         return typed.strip()
     try:
-        k = st.secrets.get("OPENAI_API_KEY", "")
+        k = st.secrets.get("GEMINI_API_KEY", "")
     except Exception:
         k = ""
-    return k or os.environ.get("OPENAI_API_KEY", "")
+    return k or os.environ.get("GEMINI_API_KEY", "")
 
 
 AI_SYSTEM = (
@@ -674,18 +691,23 @@ AI_SYSTEM = (
 AI_LANG = {"zh": "Simplified Chinese", "ja": "Japanese"}
 
 
-def call_openai(api_key, model, system, user_text, max_tokens=1500):
-    """通过 OpenAI Responses API 调用 GPT 模型进行电化学数据解读。"""
-    from openai import OpenAI
+def call_gemini(api_key, model, system, user_text, max_tokens=1500):
+    """通过 Gemini API 进行电化学数据解读。"""
+    from google import genai
+    from google.genai import types
 
-    client = OpenAI(api_key=api_key, timeout=90)
-    response = client.responses.create(
+    client = genai.Client(api_key=api_key)
+
+    response = client.models.generate_content(
         model=model,
-        instructions=system,
-        input=user_text,
-        max_output_tokens=max_tokens,
+        contents=user_text,
+        config=types.GenerateContentConfig(
+            system_instruction=system,
+            max_output_tokens=max_tokens,
+        ),
     )
-    return response.output_text or ""
+
+    return response.text or ""
 
 
 # ---------------------------------------------------------------- 拟合
@@ -807,11 +829,12 @@ def pot_label(p):
 
 
 def axis_labels(mode, p):
+    x_unit = "min" if p.get("x_to_min") else "s"
     if mode == "CV":
         return pot_label(p), cur_label(p)
     if mode == "CA":
-        return "Time / s", cur_label(p)
-    return "Time / s", pot_label(p)
+        return f"Time / {x_unit}", cur_label(p)
+    return f"Time / {x_unit}", pot_label(p)
 
 
 def y2_label(p, y2kind, y2name):
@@ -822,29 +845,42 @@ def y2_label(p, y2kind, y2name):
     return pretty(y2name)
 
 
-def apply_ticks(ax, ax2, p):
+def apply_ticks(ax, ax2, ax3, p):
     tm, tn, d = p["tick_marks"], p["tick_nums"], p["tick_dir"]
     ax.tick_params(axis="both", which="both", direction=d)
-    ax.tick_params(axis="x", which="both", bottom=tm["bottom"], top=tm["top"], labelbottom=tn["bottom"], labeltop=tn["top"])
+    # 如果启用了 ax3，底部 x 轴顶端的刻度和标签就不画，留给 ax3 控制
+    top_marks = tm["top"] if not ax3 else False
+    top_nums = tn["top"] if not ax3 else False
+    
+    ax.tick_params(axis="x", which="both", bottom=tm["bottom"], top=top_marks, labelbottom=tn["bottom"], labeltop=top_nums)
     ax.tick_params(axis="y", which="both", left=tm["left"], labelleft=tn["left"])
     if ax2 is None:
         ax.tick_params(axis="y", which="both", right=tm["right"], labelright=tn["right"])
     else:
         ax.tick_params(axis="y", which="both", right=False, labelright=False)
         ax2.tick_params(axis="y", which="both", direction=d, left=False, labelleft=False, right=tm["right"], labelright=tn["right"])
+    
+    if ax3 is not None:
+        ax3.tick_params(axis="x", which="both", direction=d, top=tm["top"], labeltop=tn["top"], bottom=False, labelbottom=False)
+
     if p["minor"]:
         ax.minorticks_on()
         if ax2 is not None:
             ax2.minorticks_on()
+        if ax3 is not None:
+            ax3.minorticks_on()
     else:
         ax.minorticks_off()
         if ax2 is not None:
             ax2.minorticks_off()
+        if ax3 is not None:
+            ax3.minorticks_off()
 
 
 def color_yaxis(a, side, c):
-    a.yaxis.label.set_color(c)
-    a.tick_params(axis="y", which="both", colors=c)
+    if a.yaxis:
+        a.yaxis.label.set_color(c)
+        a.tick_params(axis="y", which="both", colors=c)
     a.spines[side].set_color(c)
 
 
@@ -852,6 +888,8 @@ def build_fig(results, mode, p, show_removed):
     set_style(p)
     fig, ax = plt.subplots(figsize=(p["w"] * MM, p["h"] * MM), constrained_layout=True)
     ax2 = ax.twinx() if p["dual"] else None
+    ax3 = ax.twiny() if p.get("dual_x") else None
+    
     handles, labels = [], []
     sm_left = p["sm_method"] != "none"
     sm_right = sm_left and p["sm_right"]
@@ -871,13 +909,21 @@ def build_fig(results, mode, p, show_removed):
         handles.append(h)
         labels.append(label)
 
+    xl, yl = axis_labels(mode, p)
+    actual_yl = p["lab_y"] or yl
+    actual_y2l = (p["lab_y2"] or y2_label(p, p["y2kind"], results[0]["y2name"])) if p["dual"] else ""
+
     multi = len(results) > 1
     for k, r in enumerate(results):
         cl, cr = p["colors"][k]
-        left_name = f"{r['name']} · {r['ylab']}" if (multi and p["dual"]) else (r["name"] if multi else r["ylab"])
+        if p["dual"]:
+            left_name = f"{r['name']} ({short(actual_yl)})" if multi else actual_yl
+            right_name = f"{r['name']} ({short(actual_y2l)})" if multi else actual_y2l
+        else:
+            left_name = r['name']
+
         draw(ax, r["x"], r["y"], r["y_raw"], r["keep"], cl, left_name, sm_left)
         if p["dual"]:
-            right_name = f"{r['name']} · {r['y2lab']}" if multi else r["y2lab"]
             draw(ax2, r["x"], r["y2"], r["y2_raw"], r["keep"], cr, right_name, sm_right)
         if r["fit"] is not None:
             xx, yy, r2 = r["fit"]
@@ -902,22 +948,30 @@ def build_fig(results, mode, p, show_removed):
     ax.set_xlabel(cjk_safe(p["lab_x"] or xl))
     ax.set_ylabel(cjk_safe(p["lab_y"] or yl))
 
+    if ax3 is not None:
+        ax3.set_xlabel(cjk_safe(p.get("lab_x2") or ""))
+
     if p["dual"]:
         ax.spines["right"].set_visible(False)
         ax2.spines[["left", "top", "bottom"]].set_visible(False)
         ax2.set_ylabel(cjk_safe(p["lab_y2"] or y2_label(p, p["y2kind"], results[0]["y2name"])))
-
+        
     if p["xlim"] != (None, None):
         ax.set_xlim(*p["xlim"])
     if p["ylim"] != (None, None):
         ax.set_ylim(*p["ylim"])
     if p["dual"] and p["y2lim"] != (None, None):
         ax2.set_ylim(*p["y2lim"])
+    if ax3 is not None:
+        if p.get("x2lim") and p["x2lim"] != (None, None):
+            ax3.set_xlim(*p["x2lim"])
+        else:
+            ax3.set_xlim(ax.get_xlim())
 
     skipped = []
 
     def set_step(a, axis, step):
-        if step is None:
+        if step is None or not a:
             return
         lo, hi = a.get_xlim() if axis == "x" else a.get_ylim()
         if abs(hi - lo) / step > 200:  # 间隔太小会画出成百上千条刻度，直接忽略
@@ -929,15 +983,17 @@ def build_fig(results, mode, p, show_removed):
     set_step(ax, "y", p["ystep"])
     if p["dual"]:
         set_step(ax2, "y", p["y2step"])
+    if ax3:
+        set_step(ax3, "x", p.get("x2step"))
 
-    apply_ticks(ax, ax2, p)
+    apply_ticks(ax, ax2, ax3, p)
     color_yaxis(ax, "left", p["yl_col"])
     if p["dual"]:
         color_yaxis(ax2, "right", p["yr_col"])
     fig._tick_skipped = bool(skipped)
 
-    if p["legend"] and (multi or any(r["fit"] for r in results)):
-        (ax2 or ax).legend(handles, labels)
+    if p["legend"] and handles:
+        (ax2 or ax).legend(handles, labels, loc=p.get("legend_loc", "best"))
     return fig
 
 
@@ -960,7 +1016,7 @@ def html_label(s):
 
 
 def plain_label(s):
-    """给 CSV 表头用：把 $...$ 换成 Unicode 上下标。"""
+    """给 CSV 表头用：把 $...$ 換成 Unicode 上下标。"""
     return re.sub(r"\$([^$]*)\$", _uni_math, s)
 
 
@@ -1016,12 +1072,19 @@ def build_plotly(results, mode, p, hover_mode, spikes, show_removed):
         all_x.append(r["x"][keep])
         (all_y if axis == "y" else all_y2).append(y_s[keep])
 
+    actual_yl = p["lab_y"] or yl
+    actual_y2l = (p["lab_y2"] or y2_label(p, p["y2kind"], results[0]["y2name"])) if p["dual"] else ""
+
     for k, r in enumerate(results):
         cl, cr = p["colors"][k]
-        left_name = f"{r['name']} · {r['ylab']}" if (multi and p["dual"]) else (r["name"] if multi else r["ylab"])
+        if p["dual"]:
+            left_name = f"{r['name']} ({short(actual_yl)})" if multi else actual_yl
+            right_name = f"{r['name']} ({short(actual_y2l)})" if multi else actual_y2l
+        else:
+            left_name = r['name']
+
         add(r, r["y"], r["y_raw"], cl, left_name, yt, "y", sm_left)
         if p["dual"]:
-            right_name = f"{r['name']} · {r['y2lab']}" if multi else r["y2lab"]
             add(r, r["y2"], r["y2_raw"], cr, right_name, y2t, "y2", sm_right)
         if p["show_peaks"] and mode == "CV":
             pk = r.get("peaks") or {}
@@ -1144,10 +1207,12 @@ yi = sb.selectbox(t("ycol"), range(len(cols)), index=1, format_func=lambda i: co
 c1, c2 = sb.columns(2)
 p_start = c1.number_input(t("start"), min_value=0, value=0, step=1, key="start")
 p_end = c2.number_input(t("end"), min_value=0, value=0, step=1, key="end")
+p["x_to_min"] = sb.checkbox(t("x_to_min"), key="x_to_min")
 
-# ---- 双 y 轴
+# ---- 双 y 轴 / 双 x 轴
 sb.subheader(t("sec_dual"))
 p["dual"] = sb.checkbox(t("dual"), key="dual")
+p["dual_x"] = sb.checkbox(t("dual_x"), key="dual_x")
 y2i, y2kind = 0, "other"
 if p["dual"]:
     y2i = sb.selectbox(t("y2col"), range(len(cols)), index=min(2, len(cols) - 1), format_func=lambda i: cols[i], key=f"y2i_{sig}")
@@ -1186,6 +1251,7 @@ if use_hampel:
     sb.caption(t("hampel_note"))
 ex_range = sb.text_input(t("ex_range"), key="ex_range")
 ex_idx = sb.text_input(t("ex_idx"), key="ex_idx")
+p["reset_index_and_x"] = sb.checkbox(t("reset_idx"), value=True, key="reset_idx")
 
 # ---- 平滑
 sb.subheader(t("sec_smooth"))
@@ -1217,6 +1283,7 @@ p["h"] = sb.slider(t("height"), 40, 120, 65, key="height")
 p["fs"] = sb.slider(t("fontsize"), 6, 14, 9, key="fs")
 p["scatter"] = sb.checkbox(t("scatter"), value=(mode != "CV"), key=f"scatter_{mode}")
 p["legend"] = sb.checkbox(t("legend"), value=True, key="legend")
+p["legend_loc"] = sb.selectbox(t("legend_loc"), ["best", "upper right", "upper left", "lower right", "lower left"], key="leg_loc")
 p["show_peaks"] = sb.checkbox(t("show_peaks"), key="show_peaks") if mode == "CV" else False
 
 # ---- 坐标轴范围
@@ -1224,6 +1291,12 @@ with sb.expander(t("sec_range")):
     r1, r2 = st.columns(2)
     xmin = r1.text_input(t("xmin"), key="xmin")
     xmax = r2.text_input(t("xmax"), key="xmax")
+    x2min = x2max = ""
+    if p.get("dual_x"):
+        r1, r2 = st.columns(2)
+        x2min = r1.text_input(t("x2min"), key="x2min")
+        x2max = r2.text_input(t("x2max"), key="x2max")
+        
     r1, r2 = st.columns(2)
     ymin = r1.text_input(t("ymin"), key="ymin")
     ymax = r2.text_input(t("ymax"), key="ymax")
@@ -1247,10 +1320,11 @@ with sb.expander(t("sec_ticks")):
     p["minor"] = st.checkbox(t("minor"), value=True, key="minor")
     p["tick_dir"] = st.radio(t("tdir"), ["in", "out"], format_func=lambda d: t("dir_" + d), horizontal=True, key="tdir")
     st.caption(t("step_title"))
-    sc = st.columns(3 if p["dual"] else 2)
+    sc = st.columns(2)
     stx = sc[0].text_input(t("stepx"), key="step_x")
     sty = sc[1].text_input(t("stepy"), key="step_y")
-    sty2 = sc[2].text_input(t("stepy2"), key="step_y2") if p["dual"] else ""
+    stx2 = sc[0].text_input(t("stepx2"), key="step_x2") if p.get("dual_x") else ""
+    sty2 = sc[1].text_input(t("stepy2"), key="step_y2") if p["dual"] else ""
 
 # ---- 颜色
 with sb.expander(t("sec_color"), expanded=True):
@@ -1282,6 +1356,7 @@ with sb.expander(t("sec_color"), expanded=True):
 # ---- 轴标签
 with sb.expander(t("sec_labels")):
     p["lab_x"] = st.text_input(t("lab_x"), key="lab_x", help=t("lab_help"))
+    p["lab_x2"] = st.text_input(t("lab_x2"), key="lab_x2", help=t("lab_help")) if p.get("dual_x") else ""
     p["lab_y"] = st.text_input(t("lab_y"), key="lab_y", help=t("lab_help"))
     p["lab_y2"] = st.text_input(t("lab_y2"), key="lab_y2", help=t("lab_help")) if p["dual"] else ""
     st.caption(t("lab_note"))
@@ -1289,7 +1364,7 @@ with sb.expander(t("sec_labels")):
 # ---- AI 分析设置
 with sb.expander(t("sec_ai")):
     ai_key_typed = st.text_input(t("ai_key"), type="password", key="ai_key", help=t("ai_key_help"))
-    ai_model = st.text_input(t("ai_model"), value="chat-latest", key="ai_model", help=t("ai_model_help"))
+    ai_model = st.text_input(t("ai_model"), value="gemini-3.8-flash", key="ai_model", help=t("ai_model_help"))
     ai_ctx = st.text_area(t("ai_ctx"), key="ai_ctx", placeholder=t("ai_ctx_ph"), height=80)
     ai_scan = st.text_input(t("ai_scan"), key="ai_scan") if mode == "CV" else ""
     ai_q = st.text_area(t("ai_q"), key="ai_q", height=70)
@@ -1307,8 +1382,9 @@ try:
     p["xlim"] = (parse_float(xmin), parse_float(xmax))
     p["ylim"] = (parse_float(ymin), parse_float(ymax))
     p["y2lim"] = (parse_float(y2min), parse_float(y2max))
-    p["xstep"], p["ystep"], p["y2step"] = parse_float(stx), parse_float(sty), parse_float(sty2)
-    if any(v is not None and v <= 0 for v in (p["xstep"], p["ystep"], p["y2step"])):
+    p["x2lim"] = (parse_float(x2min), parse_float(x2max))
+    p["xstep"], p["ystep"], p["x2step"], p["y2step"] = parse_float(stx), parse_float(sty), parse_float(stx2), parse_float(sty2)
+    if any(v is not None and v <= 0 for v in (p["xstep"], p["ystep"], p["x2step"], p["y2step"])):
         raise ValueError("step")
 except ValueError:
     st.warning(t("warn_num"))
@@ -1317,9 +1393,13 @@ except ValueError:
 results, rows = [], []
 for name, df in dfs.items():
     d = df.iloc[int(p_start) : (int(p_end) or None)]
-    idx = d.index.to_numpy()
-    x, y_raw = transform(d.iloc[:, xi].to_numpy(float), d.iloc[:, yi].to_numpy(float), mode, p)
-    y2_raw = transform_y2(d.iloc[:, y2i].to_numpy(float), y2kind, p) if p["dual"] else None
+    idx = d.index.to_numpy().copy()
+    x, y_raw = transform(d.iloc[:, xi].to_numpy(float).copy(), d.iloc[:, yi].to_numpy(float).copy(), mode, p)
+    
+    if p.get("x_to_min"):
+        x = x / 60.0
+        
+    y2_raw = transform_y2(d.iloc[:, y2i].to_numpy(float).copy(), y2kind, p) if p["dual"] else None
     keep = np.isfinite(x) & np.isfinite(y_raw)
     if y2_raw is not None:
         keep &= np.isfinite(y2_raw)
@@ -1328,6 +1408,29 @@ for name, df in dfs.items():
     for lo, hi in bad_ranges:
         keep &= ~((x >= lo) & (x <= hi))
     keep &= ~np.isin(idx, list(bad_idx))
+    
+    if p.get("reset_index_and_x") and keep.any():
+        x = x.copy()
+        idx = idx.copy()
+        idx[keep] = np.arange(keep.sum())
+        
+        kept_indices = np.where(keep)[0]
+        if len(kept_indices) > 0:
+            diffs = np.diff(x)
+            pos_diffs = diffs[np.abs(diffs) > 1e-12]
+            dx_default = np.median(pos_diffs) if len(pos_diffs) > 0 else 1.0
+            
+            new_x_kept = np.zeros(len(kept_indices))
+            new_x_kept[0] = 0.0
+            for i in range(1, len(kept_indices)):
+                prev_idx = kept_indices[i-1]
+                curr_idx = kept_indices[i]
+                if curr_idx == prev_idx + 1:
+                    step = x[curr_idx] - x[prev_idx]
+                else:
+                    step = dx_default
+                new_x_kept[i] = new_x_kept[i-1] + step
+            x[keep] = new_x_kept
 
     # 平滑（只作用于保留下来的点）
     y, y2 = y_raw.copy(), (y2_raw.copy() if y2_raw is not None else None)
@@ -1495,7 +1598,7 @@ if p["dual"]:
     payload["axes"]["y_right"] = p["lab_y2"] or y2_label(p, p["y2kind"], results[0]["y2name"])
 payload_json = json.dumps(payload, ensure_ascii=False, indent=1, default=str)
 question = ai_q.strip() or "Please analyze this data."
-user_text = f"{question}\n\nData summary (JSON):\n```json\n{payload_json}\n```"
+user_text = f"{question}\n\nData summary (JSON):\n\n```json\n{payload_json}\n```"
 system_text = AI_SYSTEM.format(language=AI_LANG[lang])
 sig_now = hashlib.sha1((ai_model + system_text + user_text).encode("utf-8")).hexdigest()
 
@@ -1508,13 +1611,18 @@ if st.button(t("ai_btn"), type="primary", key="ai_go"):
         st.error(t("ai_nokey"))
     else:
         try:
-            import openai  # noqa: F401
+            import google.genai  # noqa: F401
         except ImportError:
             st.error(t("ai_nopkg"))
         else:
             try:
                 with st.spinner(t("ai_spin")):
-                    text = call_openai(api_key, ai_model.strip(), system_text, user_text)
+                    text = call_gemini(
+                        api_key,
+                        ai_model.strip(),
+                        system_text,
+                        user_text
+                    )
                 st.session_state["ai_result"] = (sig_now, text)
             except Exception as e:
                 st.error(t("ai_fail", err=f"{type(e).__name__}: {str(e)[:300]}"))
