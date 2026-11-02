@@ -72,11 +72,45 @@ TR = {
         "parse_fail": "{name} 解析失败：{err}",
         "err_two_cols": "数据至少需要两列。",
         "sec_data": "数据列",
+        "grp_data": "数据",
+        "grp_proc": "数据处理",
+        "grp_axes": "坐标轴",
+        "grp_curves": "曲线与图例",
+        "grp_fig": "图形外观",
+        "sub_cols": "数据列",
+        "sub_rows": "使用的行范围",
+        "sub_curves": "曲线颜色",
+        "sub_legend": "图例",
+        "ax_x": "下方 x 轴",
+        "ax_x2": "上方 x 轴 (x2)",
+        "ax_y": "左 y 轴",
+        "ax_y2": "右 y 轴 (y2)",
+        "ax_color": "轴的颜色（标签、刻度、轴线）",
+        "color_xb": "下方 x 轴颜色",
+        "sub_ticks_common": "刻度设置（四个轴共用）",
+        "color_x2curve": "{name} 上方 x 轴曲线颜色",
+        "leg_text_x2": "{name} (上方 x 轴) 图例名称",
+        "time_unit": "时间单位（原始数据按秒）",
+        "ref_custom": "自定义…",
+        "ref_custom_name": "参比电极名称（显示在轴标签里）",
+        "ref_custom_E": "该电极相对 SHE 的电位 / V（换算 RHE 用）",
+        "reset_mode": "剔除点后坐标递补",
+        "reset_all": "全部收拢（所有被剔除的空档都补上）",
+        "reset_head": "只收拢开头（第一个保留点归零，中间空档保留）",
+        "reset_off": "不递补",
+        "reset_note": "递补只作用于时间轴，CV 的电位不会被改动。",
+        "leg_manual": "手动指定位置",
+        "leg_x": "图例 x（0 左 → 1 右）",
+        "leg_y": "图例 y（0 下 → 1 上）",
+        "leg_manual_note": "以图例左上角为基准点，坐标是相对绘图区的比例，可以超出 0–1 把图例放到图外。",
+        "leg_ncol": "图例列数",
+        "leg_frame": "显示图例边框",
+        "x2_note": "上方 x 轴：以所选列为横坐标，把左 y 轴的数据再画一条曲线（颜色、图例名称可单独设置）。类型选“电位”会做参比换算，选“时间”会跟随“时间单位”。",
         "xcol": "x 列",
         "ycol": "y 列（左轴）",
         "start": "起始行",
         "end": "结束行（0=到末尾）",
-        "x_to_min": "x 轴时间转换为分钟 (÷60)",
+        "x_to_min": "时间轴换算为分钟 (÷60)",
         "sec_dual": "双轴设置 (x2 / y2)",
         "dual": "启用右侧第二个 y 轴 (y2)",
         "dual_x": "启用上方第二个 x 轴 (x2)",
@@ -189,7 +223,7 @@ TR = {
         "sec_ai": "AI 分析",
         "ai_intro": "把处理后的数据摘要（峰位、拟合参数、统计量等）发给 Gemini，让它帮你解读。发送的是摘要，不是原始数据文件；发送前可以在下面展开查看具体内容。",
         "ai_warn": "AI 的解读可能有误，仅供参考，请对照原始数据和文献自行核对。发送的内容会经过 Google 的服务器，未发表的数据请谨慎处理。",
-        "ai_key": " API 密钥",
+        "ai_key": "API 密钥",
         "ai_key_help": "只在本次使用中保存在内存里，不会写入文件。不要把密钥写进代码，也不要上传到 GitHub。",
         "ai_model": "模型",
         "ai_model_help": "填写 Google Gemini API 的模型名称。当前默认模型为 gemini-3.8-flash。",
@@ -256,11 +290,45 @@ TR = {
         "parse_fail": "{name} の読み込みに失敗しました：{err}",
         "err_two_cols": "データには少なくとも2列必要です。",
         "sec_data": "データ列",
+        "grp_data": "データ",
+        "grp_proc": "データ処理",
+        "grp_axes": "軸",
+        "grp_curves": "曲線と凡例",
+        "grp_fig": "図の外観",
+        "sub_cols": "データ列",
+        "sub_rows": "使用する行の範囲",
+        "sub_curves": "曲線の色",
+        "sub_legend": "凡例",
+        "ax_x": "下部 x 軸",
+        "ax_x2": "上部 x 軸 (x2)",
+        "ax_y": "左 y 軸",
+        "ax_y2": "右 y 軸 (y2)",
+        "ax_color": "軸の色（ラベル・目盛り・軸線）",
+        "color_xb": "下部 x 軸の色",
+        "sub_ticks_common": "目盛りの設定（全軸共通）",
+        "color_x2curve": "{name} 上部 x 軸の曲線の色",
+        "leg_text_x2": "{name} (上部 x 軸) 凡例",
+        "time_unit": "時間の単位（元データは秒）",
+        "ref_custom": "カスタム…",
+        "ref_custom_name": "参照電極の名称（軸ラベルに表示）",
+        "ref_custom_E": "この電極の SHE 基準の電位 / V（RHE 換算用）",
+        "reset_mode": "除去後の座標の詰め方",
+        "reset_all": "すべて詰める（除去した隙間をすべて埋める）",
+        "reset_head": "先頭だけ詰める（最初の残った点を 0 に、途中の隙間は残す）",
+        "reset_off": "詰めない",
+        "reset_note": "詰める処理は時間軸にだけ働きます。CV の電位は変更されません。",
+        "leg_manual": "位置を手動指定",
+        "leg_x": "凡例 x（0 左 → 1 右）",
+        "leg_y": "凡例 y（0 下 → 1 上）",
+        "leg_manual_note": "凡例の左上を基準点とし、座標は描画領域に対する比率です。0–1 の範囲外にして図の外に置くこともできます。",
+        "leg_ncol": "凡例の列数",
+        "leg_frame": "凡例の枠を表示",
+        "x2_note": "上部 x 軸：選んだ列を横軸にして、左 y 軸のデータをもう一本描きます（色・凡例名は個別に設定できます）。種類で「電位」を選ぶと参照電極換算、「時間」を選ぶと「時間の単位」が適用されます。",
         "xcol": "x 列",
         "ycol": "y 列（左軸）",
         "start": "開始行",
         "end": "終了行（0=最後まで）",
-        "x_to_min": "x軸の時間を分に変換 (÷60)",
+        "x_to_min": "時間軸を分に変換 (÷60)",
         "sec_dual": "二軸の設定 (x2 / y2)",
         "dual": "右側に第2の y 軸を使う (y2)",
         "dual_x": "上部に第2の x 軸を使う (x2)",
@@ -557,6 +625,50 @@ def transform_y2(y2, kind, p):
     return y2
 
 
+def transform_x2(x2, kind, p):
+    if kind == "pot":
+        return x2 + p["shift"]
+    if kind == "time":
+        return time_conv(x2, p.get("time_unit", "s"))
+    return x2
+
+
+def renumber_x(x, keep):
+    # 剔除点后，让保留点的坐标依次递补：第一个保留点归零，连续点保持原步长，断开处用中位步长衔接
+    x = x.copy()
+    kept = np.where(keep)[0]
+    if len(kept) == 0:
+        return x
+    diffs = np.diff(x)
+    pos = diffs[np.abs(diffs) > 1e-12]
+    dx_default = np.median(pos) if len(pos) > 0 else 1.0
+    new = np.zeros(len(kept))
+    for i in range(1, len(kept)):
+        a, b = kept[i - 1], kept[i]
+        step = x[b] - x[a] if b == a + 1 else dx_default
+        new[i] = new[i - 1] + step
+    x[keep] = new
+    return x
+
+
+def shift_head(x, keep):
+    # 只收拢开头：第一个保留点归零，中间被剔除的空档保持原样
+    x = x.copy()
+    first = np.where(keep)[0][0]
+    return x - x[first]
+
+
+def time_conv(x, unit):
+    # 原始时间单位是秒
+    if unit == "ms":
+        return x * 1000.0
+    if unit == "min":
+        return x / 60.0
+    if unit == "h":
+        return x / 3600.0
+    return x
+
+
 def hampel(y, window=7, n_sigma=3.0):
     s = pd.Series(y)
     med = s.rolling(window, center=True, min_periods=1).median()
@@ -833,7 +945,7 @@ def pot_label(p):
 
 
 def axis_labels(mode, p):
-    x_unit = "min" if p.get("x_to_min") else "s"
+    x_unit = p.get("time_unit", "s")
     if mode == "CV":
         return pot_label(p), cur_label(p)
     if mode == "CA":
@@ -847,6 +959,14 @@ def y2_label(p, y2kind, y2name):
     if y2kind == "pot":
         return pot_label(p)
     return pretty(y2name)
+
+
+def x2_label(p, x2kind, x2name):
+    if x2kind == "time":
+        return f"Time / {p.get('time_unit', 's')}"
+    if x2kind == "pot":
+        return pot_label(p)
+    return pretty(x2name)
 
 
 def apply_ticks(ax, ax2, ax3, p):
@@ -904,7 +1024,7 @@ def build_fig(results, mode, p, show_removed):
     sm_left = p["sm_method"] != "none"
     sm_right = sm_left and p["sm_right"]
 
-    def draw(a, x, ys, yr, keep, color, label, smoothed):
+    def draw(a, x, ys, yr, keep, color, label, smoothed, mark_removed=True):
         if smoothed and p["show_raw"]:
             if p["scatter"]:
                 a.plot(x[keep], yr[keep], "o", ms=1.6, color=color, alpha=0.3, ls="none")
@@ -914,7 +1034,7 @@ def build_fig(results, mode, p, show_removed):
             (h,) = a.plot(x[keep], ys[keep], color=color, label=label)
         else:
             (h,) = a.plot(x[keep], ys[keep], "o", ms=2, color=color, label=label)
-        if show_removed and (~keep).any():
+        if show_removed and mark_removed and (~keep).any():
             a.plot(x[~keep], yr[~keep], "x", color="red", ms=4, mew=0.8)
         handles.append(h)
         labels.append(label)
@@ -923,11 +1043,15 @@ def build_fig(results, mode, p, show_removed):
     actual_yl = p["lab_y"] or yl
     actual_y2l = (p["lab_y2"] or y2_label(p, p["y2kind"], results[0]["y2name"])) if p["dual"] else ""
 
+    actual_x2l = (p["lab_x2"] or x2_label(p, p["x2kind"], results[0]["x2name"])) if ax3 is not None else ""
+
     multi = len(results) > 1
     custom_legs = p.get("custom_legends", [])
+    custom_x2 = p.get("custom_legends_x2", [])
     for k, r in enumerate(results):
         cl, cr = p["colors"][k]
         c_left, c_right = custom_legs[k] if k < len(custom_legs) else ("", "")
+        c_x2 = custom_x2[k] if k < len(custom_x2) else ""
         if p["dual"]:
             default_left = f"{r['name']} ({short(actual_yl)})" if multi else actual_yl
             default_right = f"{r['name']} ({short(actual_y2l)})" if multi else actual_y2l
@@ -939,6 +1063,9 @@ def build_fig(results, mode, p, show_removed):
         draw(ax, r["x"], r["y"], r["y_raw"], r["keep"], cl, left_name, sm_left)
         if p["dual"]:
             draw(ax2, r["x"], r["y2"], r["y2_raw"], r["keep"], cr, right_name, sm_right)
+        if ax3 is not None:
+            top_name = c_x2 if c_x2 else f"{r['name']} ({short(actual_x2l)})"
+            draw(ax3, r["x2"], r["y"], r["y_raw"], r["keep"], p["colors_x2"][k], top_name, sm_left, mark_removed=False)
         if r["fit"] is not None:
             xx, yy, r2 = r["fit"]
             (h,) = ax.plot(xx, yy, "--", color=p["fit_color"], lw=1.0)
@@ -963,7 +1090,9 @@ def build_fig(results, mode, p, show_removed):
     ax.set_ylabel(cjk_safe(p["lab_y"] or yl))
 
     if ax3 is not None:
-        ax3.set_xlabel(cjk_safe(p.get("lab_x2") or ""))
+        ax3.set_xlabel(cjk_safe(actual_x2l))
+        ax.spines["top"].set_visible(False)
+        ax3.spines[["left", "right", "bottom"]].set_visible(False)
 
     if p["dual"]:
         ax.spines["right"].set_visible(False)
@@ -976,11 +1105,8 @@ def build_fig(results, mode, p, show_removed):
         ax.set_ylim(*p["ylim"])
     if p["dual"] and p["y2lim"] != (None, None):
         ax2.set_ylim(*p["y2lim"])
-    if ax3 is not None:
-        if p.get("x2lim") and p["x2lim"] != (None, None):
-            ax3.set_xlim(*p["x2lim"])
-        else:
-            ax3.set_xlim(ax.get_xlim())
+    if ax3 is not None and p.get("x2lim") and p["x2lim"] != (None, None):
+        ax3.set_xlim(*p["x2lim"])
 
     skipped = []
 
@@ -1001,15 +1127,25 @@ def build_fig(results, mode, p, show_removed):
         set_step(ax3, "x", p.get("x2step"))
 
     apply_ticks(ax, ax2, ax3, p)
+    color_xaxis(ax, "bottom", p["xb_col"])
     color_yaxis(ax, "left", p["yl_col"])
     if p["dual"]:
         color_yaxis(ax2, "right", p["yr_col"])
     if ax3 is not None:
-        color_xaxis(ax3, "top", p.get("xt_col", "#000000"))
+        color_xaxis(ax3, "top", p["xt_col"])
     fig._tick_skipped = bool(skipped)
 
     if p["legend"] and handles:
-        (ax2 or ax).legend(handles, labels, loc=p.get("legend_loc", "best"))
+        kw = dict(ncol=p.get("legend_ncol", 1), frameon=p.get("legend_frame", False))
+        if p.get("legend_loc") == "manual":
+            kw.update(loc="upper left", bbox_to_anchor=p["legend_xy"])
+        else:
+            kw.update(loc=p.get("legend_loc", "best"))
+        if kw["frameon"]:
+            kw.update(edgecolor="black", fancybox=False, framealpha=1.0)
+        leg = (ax3 or ax2 or ax).legend(handles, labels, **kw)
+        if kw["frameon"]:
+            leg.get_frame().set_linewidth(0.8)
     return fig
 
 
@@ -1047,51 +1183,56 @@ def build_plotly(results, mode, p, hover_mode, spikes, show_removed):
     xl, yl = axis_labels(mode, p)
     xt, yt = html_label(p["lab_x"] or xl), html_label(p["lab_y"] or yl)
     y2t = html_label(p["lab_y2"] or y2_label(p, p["y2kind"], results[0]["y2name"])) if p["dual"] else ""
+    actual_x2l = (p["lab_x2"] or x2_label(p, p["x2kind"], results[0]["x2name"])) if p["dual_x"] else ""
+    x2t = html_label(actual_x2l)
     sm_left = p["sm_method"] != "none"
     sm_right = sm_left and p["sm_right"]
     multi = len(results) > 1
     fig = go.Figure()
-    all_x, all_y, all_y2 = [], [], []
+    all_x, all_x2, all_y, all_y2 = [], [], [], []
 
-    def tip(name, ytitle):
-        return f"<b>{name}</b><br>{xt}: %{{x:.5g}}<br>{ytitle}: %{{y:.5g}}<br>row %{{customdata}}<extra></extra>"
+    def tip(name, ytitle, xtitle=None):
+        return f"<b>{name}</b><br>{xtitle or xt}: %{{x:.5g}}<br>{ytitle}: %{{y:.5g}}<br>row %{{customdata}}<extra></extra>"
 
-    def add(r, y_s, y_r, color, name, ytitle, axis, smoothed):
+    def add(r, y_s, y_r, color, name, ytitle, axis, smoothed, xs=None, xaxis="x", xtitle=None, mark_removed=True):
+        xs = r["x"] if xs is None else xs
         keep = r["keep"]
         if smoothed and p["show_raw"]:
             fig.add_trace(
                 go.Scatter(
-                    x=r["x"][keep], y=y_r[keep], mode="markers" if p["scatter"] else "lines", opacity=0.3,
+                    x=xs[keep], y=y_r[keep], mode="markers" if p["scatter"] else "lines", opacity=0.3,
                     line=dict(color=color, width=1), marker=dict(color=color, size=3),
-                    hoverinfo="skip", showlegend=False, yaxis=axis,
+                    hoverinfo="skip", showlegend=False, yaxis=axis, xaxis=xaxis,
                 )
             )
         as_lines = smoothed or not p["scatter"]
         fig.add_trace(
             go.Scatter(
-                x=r["x"][keep], y=y_s[keep], mode="lines" if as_lines else "markers", name=name,
+                x=xs[keep], y=y_s[keep], mode="lines" if as_lines else "markers", name=name,
                 line=dict(color=color, width=1.8), marker=dict(color=color, size=5),
-                customdata=r["idx"][keep], hovertemplate=tip(name, ytitle), yaxis=axis,
+                customdata=r["idx"][keep], hovertemplate=tip(name, ytitle, xtitle), yaxis=axis, xaxis=xaxis,
             )
         )
-        if show_removed and (~keep).any():
+        if show_removed and mark_removed and (~keep).any():
             fig.add_trace(
                 go.Scatter(
-                    x=r["x"][~keep], y=y_r[~keep], mode="markers", name="removed", showlegend=False,
+                    x=xs[~keep], y=y_r[~keep], mode="markers", name="removed", showlegend=False,
                     marker=dict(color="red", symbol="x", size=7), customdata=r["idx"][~keep],
-                    hovertemplate=tip("removed", ytitle), yaxis=axis,
+                    hovertemplate=tip("removed", ytitle, xtitle), yaxis=axis, xaxis=xaxis,
                 )
             )
-        all_x.append(r["x"][keep])
+        (all_x2 if xaxis == "x2" else all_x).append(xs[keep])
         (all_y if axis == "y" else all_y2).append(y_s[keep])
 
     actual_yl = p["lab_y"] or yl
     actual_y2l = (p["lab_y2"] or y2_label(p, p["y2kind"], results[0]["y2name"])) if p["dual"] else ""
 
     custom_legs = p.get("custom_legends", [])
+    custom_x2 = p.get("custom_legends_x2", [])
     for k, r in enumerate(results):
         cl, cr = p["colors"][k]
         c_left, c_right = custom_legs[k] if k < len(custom_legs) else ("", "")
+        c_x2 = custom_x2[k] if k < len(custom_x2) else ""
         if p["dual"]:
             default_left = f"{r['name']} ({short(actual_yl)})" if multi else actual_yl
             default_right = f"{r['name']} ({short(actual_y2l)})" if multi else actual_y2l
@@ -1103,6 +1244,12 @@ def build_plotly(results, mode, p, hover_mode, spikes, show_removed):
         add(r, r["y"], r["y_raw"], cl, left_name, yt, "y", sm_left)
         if p["dual"]:
             add(r, r["y2"], r["y2_raw"], cr, right_name, y2t, "y2", sm_right)
+        if p["dual_x"]:
+            top_name = c_x2 if c_x2 else f"{r['name']} ({short(actual_x2l)})"
+            add(
+                r, r["y"], r["y_raw"], p["colors_x2"][k], top_name, yt, "y", sm_left,
+                xs=r["x2"], xaxis="x2", xtitle=x2t, mark_removed=False,
+            )
         if p["show_peaks"] and mode == "CV":
             pk = r.get("peaks") or {}
             for key, sym, pos in (("a", "triangle-down", "top center"), ("c", "triangle-up", "bottom center")):
@@ -1127,10 +1274,15 @@ def build_plotly(results, mode, p, hover_mode, spikes, show_removed):
     ticks = "inside" if p["tick_dir"] == "in" else "outside"
     spike = dict(showspikes=spikes, spikemode="across", spikesnap="data", spikethickness=1, spikedash="dot", spikecolor="#666")
     fig.update_layout(
-        template="simple_white", height=470, margin=dict(l=70, r=70 if p["dual"] else 20, t=20, b=60),
+        template="simple_white", height=470,
+        margin=dict(l=70, r=70 if p["dual"] else 20, t=60 if p["dual_x"] else 20, b=60),
         font=dict(family=PLOTLY_FONT, size=13), hovermode="closest" if hover_mode == "closest" else "x unified",
-        showlegend=bool(multi or p["dual"] or any(r["fit"] for r in results)), legend=dict(orientation="h", y=1.1),
-        xaxis=dict(title=xt, showline=True, mirror=True, ticks=ticks, range=_axis_range(p["xlim"], all_x), dtick=p["xstep"], **spike),
+        showlegend=bool(multi or p["dual"] or p["dual_x"] or any(r["fit"] for r in results)),
+        legend=dict(orientation="h", y=1.22 if p["dual_x"] else 1.1),
+        xaxis=dict(
+            title=dict(text=xt, font=dict(color=p["xb_col"])), tickfont=dict(color=p["xb_col"]), linecolor=p["xb_col"],
+            showline=True, mirror=not p["dual_x"], ticks=ticks, range=_axis_range(p["xlim"], all_x), dtick=p["xstep"], **spike,
+        ),
         yaxis=dict(
             title=dict(text=yt, font=dict(color=p["yl_col"])), tickfont=dict(color=p["yl_col"]), linecolor=p["yl_col"],
             showline=True, mirror=not p["dual"], ticks=ticks, range=_axis_range(p["ylim"], all_y), dtick=p["ystep"], **spike,
@@ -1144,15 +1296,14 @@ def build_plotly(results, mode, p, hover_mode, spikes, show_removed):
                 range=_axis_range(p["y2lim"], all_y2), dtick=p["y2step"],
             )
         )
-    if p.get("dual_x"):
-        x2t = html_label(p.get("lab_x2") or "")
+    if p["dual_x"]:
         fig.update_layout(
             xaxis2=dict(
                 overlaying="x", side="top", showgrid=False, showline=True, ticks=ticks,
-                title=dict(text=x2t, font=dict(color=p.get("xt_col", "#000000"))),
-                tickfont=dict(color=p.get("xt_col", "#000000")),
-                linecolor=p.get("xt_col", "#000000"),
-                range=_axis_range(p.get("x2lim"), all_x), dtick=p.get("x2step"),
+                title=dict(text=x2t, font=dict(color=p["xt_col"])),
+                tickfont=dict(color=p["xt_col"]),
+                linecolor=p["xt_col"],
+                range=_axis_range(p.get("x2lim"), all_x2), dtick=p.get("x2step"),
                 **spike,
             )
         )
@@ -1168,6 +1319,9 @@ def processed_frame(r, mode, p, only_kept):
     if p["dual"]:
         y2n = plain_label(p["lab_y2"] or y2_label(p, p["y2kind"], r["y2name"]))
         data[y2n if y2n not in data else y2n + " (right)"] = r["y2"]
+    if p["dual_x"]:
+        x2n = plain_label(p["lab_x2"] or x2_label(p, p["x2kind"], r["x2name"]))
+        data[x2n if x2n not in data else x2n + " (top)"] = r["x2"]
     df = pd.DataFrame(data)
     df["kept"] = r["keep"]
     if only_kept:
@@ -1222,143 +1376,185 @@ sig = f"{mode}_{len(cols)}"
 
 p = {"cur_raw": "A", "cur_out": "µA", "norm": False, "area": 1.0, "ref": list(REF)[0], "to_rhe": False, "shift": 0.0}
 
-# ---- 数据列
-sb.subheader(t("sec_data"))
-xi = sb.selectbox(t("xcol"), range(len(cols)), index=0, format_func=lambda i: cols[i], key=f"xi_{sig}")
-yi = sb.selectbox(t("ycol"), range(len(cols)), index=1, format_func=lambda i: cols[i], key=f"yi_{sig}")
-c1, c2 = sb.columns(2)
-p_start = c1.number_input(t("start"), min_value=0, value=0, step=1, key="start")
-p_end = c2.number_input(t("end"), min_value=0, value=0, step=1, key="end")
-p["x_to_min"] = sb.checkbox(t("x_to_min"), key="x_to_min")
+AXC = ["black", "follow", "custom"]
 
-# ---- 双 y 轴 / 双 x 轴（同等待遇设置）
-sb.subheader(t("sec_dual"))
-p["dual"] = sb.checkbox(t("dual"), key="dual")
-p["dual_x"] = sb.checkbox(t("dual_x"), key="dual_x")
-y2i, y2kind = 0, "other"
-if p["dual"]:
-    y2i = sb.selectbox(t("y2col"), range(len(cols)), index=min(2, len(cols) - 1), format_func=lambda i: cols[i], key=f"y2i_{sig}")
-    nm = str(cols[y2i]).lower()
-    guess = 0 if "current" in nm else (1 if "potential" in nm else 2)
-    y2kind = sb.selectbox(t("y2kind"), ["cur", "pot", "other"], index=guess, format_func=lambda k: t("kind_" + k), key=f"y2kind_{y2i}")
-p["y2kind"] = y2kind
 
-x2i, x2kind = 0, "other"
-if p["dual_x"]:
-    x2i = sb.selectbox(t("x2col"), range(len(cols)), index=min(0, len(cols) - 1), format_func=lambda i: cols[i], key=f"x2i_{sig}")
-    nm = str(cols[x2i]).lower()
-    guess = 0 if "time" in nm else (1 if "potential" in nm else 2)
-    x2kind = sb.selectbox(t("x2kind"), ["time", "pot", "other"], index=guess, format_func=lambda k: t("kind_" + k), key=f"x2kind_{x2i}")
-p["x2kind"] = x2kind
+def _h(key):
+    st.markdown(f"**{t(key)}**")
 
-# ---- 单位与参比
-need_cur = mode in ("CV", "CA") or (p["dual"] and y2kind == "cur")
-need_pot = mode in ("CV", "CP") or (p["dual"] and y2kind == "pot")
-if need_cur or need_pot:
-    sb.subheader(t("sec_units"))
-if need_cur:
-    p["cur_raw"] = sb.selectbox(t("cur_raw"), list(CUR), index=0, key="cur_raw")
-    p["cur_out"] = sb.selectbox(t("cur_out"), list(CUR), index=2, key="cur_out")
-    p["norm"] = sb.checkbox(t("norm"), key="norm")
-    if p["norm"]:
-        p["area"] = sb.number_input(t("area"), min_value=1e-6, value=0.07, format="%.4f", key="area")
-if need_pot:
-    p["ref"] = sb.selectbox(
-        t("ref"), ["none"] + list(REF), index=1, format_func=lambda r: t("ref_none") if r == "none" else r, key="ref"
-    )
-    if p["ref"] != "none":
-        p["to_rhe"] = sb.checkbox(t("to_rhe"), key="to_rhe")
-    if p["to_rhe"]:
-        ph = sb.number_input(t("ph"), value=7.0, step=0.1, key="ph")
-        p["shift"] = REF[p["ref"]] + 0.0591 * ph
 
-# ---- 坏点剔除
-sb.subheader(t("sec_clean"))
-use_hampel = sb.checkbox(t("hampel"), key="hampel")
-win = sb.slider(t("win"), 3, 51, 11, step=2, key="win") if use_hampel else 11
-nsig = sb.slider(t("nsig"), 1.0, 8.0, 5.0, 0.5, key="nsig") if use_hampel else 5.0
-if use_hampel:
-    sb.caption(t("hampel_note"))
-ex_range = sb.text_input(t("ex_range"), key="ex_range")
-ex_idx = sb.text_input(t("ex_idx"), key="ex_idx")
-p["reset_index_and_x"] = sb.checkbox(t("reset_idx"), value=True, key="reset_idx")
+# ================================================================ 1. 数据
+with sb.expander(t("grp_data"), expanded=True):
+    _h("sub_cols")
+    xi = st.selectbox(t("xcol"), range(len(cols)), index=0, format_func=lambda i: cols[i], key=f"xi_{sig}")
+    yi = st.selectbox(t("ycol"), range(len(cols)), index=1, format_func=lambda i: cols[i], key=f"yi_{sig}")
+    p["dual"] = st.checkbox(t("dual"), key="dual")
+    p["dual_x"] = st.checkbox(t("dual_x"), key="dual_x")
 
-# ---- 平滑
-sb.subheader(t("sec_smooth"))
-p["sm_method"] = sb.selectbox(t("sm_method"), ["none", "savgol", "ma", "gauss"], format_func=lambda k: t("sm_" + k), key="sm_method")
-sm_win, sm_poly, sm_sigma = 11, 3, 2.0
-p["sm_right"], p["show_raw"] = False, False
-if p["sm_method"] != "none":
-    if p["sm_method"] in ("savgol", "ma"):
-        sm_win = sb.slider(t("sm_win"), 3, 201, 11, step=2, key="sm_win")
-    if p["sm_method"] == "savgol":
-        sm_poly = sb.slider(t("sm_poly"), 1, 6, 3, key="sm_poly")
-    if p["sm_method"] == "gauss":
-        sm_sigma = sb.slider(t("sm_sigma"), 0.5, 30.0, 2.0, 0.5, key="sm_sigma")
+    y2i, y2kind = 0, "other"
     if p["dual"]:
-        p["sm_right"] = sb.checkbox(t("sm_right"), key="sm_right")
-    p["show_raw"] = sb.checkbox(t("sm_raw"), key="sm_raw")
-    sb.caption(t("sm_note"))
+        y2i = st.selectbox(t("y2col"), range(len(cols)), index=min(2, len(cols) - 1), format_func=lambda i: cols[i], key=f"y2i_{sig}")
+        nm = str(cols[y2i]).lower()
+        guess = 0 if "current" in nm else (1 if "potential" in nm else 2)
+        y2kind = st.selectbox(t("y2kind"), ["cur", "pot", "other"], index=guess, format_func=lambda k: t("kind_" + k), key=f"y2kind_{y2i}")
+    p["y2kind"] = y2kind
 
-# ---- 拟合
-sb.subheader(t("sec_fit"))
-kind = sb.selectbox(t("fit_model"), FITS[mode], format_func=lambda k: t("fit_" + k), key=f"kind_{mode}")
-deg = sb.slider(t("deg"), 1, 6, 2, key="deg") if kind == "poly" else 2
-fit_range = sb.text_input(t("fit_range"), key="fit_range") if kind != "none" else ""
+    x2i, x2kind = 0, "other"
+    if p["dual_x"]:
+        t_idx = next((i for i, c in enumerate(cols) if "time" in str(c).lower() and i != xi), None)
+        x2_default = t_idx if t_idx is not None else min(2, len(cols) - 1)
+        x2i = st.selectbox(t("x2col"), range(len(cols)), index=x2_default, format_func=lambda i: cols[i], key=f"x2i_{sig}")
+        nm = str(cols[x2i]).lower()
+        guess = 0 if "time" in nm else (1 if "potential" in nm else 2)
+        x2kind = st.selectbox(t("x2kind"), ["time", "pot", "other"], index=guess, format_func=lambda k: t("kind_" + k), key=f"x2kind_{x2i}")
+        st.caption(t("x2_note"))
+    p["x2kind"] = x2kind
 
-# ---- 图形
-sb.subheader(t("sec_fig"))
-p["w"] = sb.selectbox(t("width"), [85, 120, 175], format_func=lambda w: t(f"w{w}"), key="width")
-p["h"] = sb.slider(t("height"), 40, 120, 65, key="height")
-p["fs"] = sb.slider(t("fontsize"), 6, 14, 9, key="fs")
-p["scatter"] = sb.checkbox(t("scatter"), value=(mode != "CV"), key=f"scatter_{mode}")
-p["legend"] = sb.checkbox(t("legend"), value=True, key="legend")
-p["legend_loc"] = sb.selectbox(t("legend_loc"), ["best", "upper right", "upper left", "lower right", "lower left"], key="leg_loc")
-p["show_peaks"] = sb.checkbox(t("show_peaks"), key="show_peaks") if mode == "CV" else False
+    st.divider()
+    _h("sub_rows")
+    c1, c2 = st.columns(2)
+    p_start = c1.number_input(t("start"), min_value=0, value=0, step=1, key="start")
+    p_end = c2.number_input(t("end"), min_value=0, value=0, step=1, key="end")
 
-# ---- 坐标轴范围
-with sb.expander(t("sec_range")):
+    need_cur = mode in ("CV", "CA") or (p["dual"] and y2kind == "cur")
+    need_pot = mode in ("CV", "CP") or (p["dual"] and y2kind == "pot") or (p["dual_x"] and x2kind == "pot")
+    need_time = mode in ("CA", "CP") or (p["dual_x"] and x2kind == "time")
+    if need_cur or need_pot or need_time:
+        st.divider()
+        _h("sec_units")
+    p["time_unit"] = st.selectbox(t("time_unit"), ["s", "ms", "min", "h"], index=0, key="time_unit") if need_time else "s"
+    if need_cur:
+        p["cur_raw"] = st.selectbox(t("cur_raw"), list(CUR), index=0, key="cur_raw")
+        p["cur_out"] = st.selectbox(t("cur_out"), list(CUR), index=2, key="cur_out")
+        p["norm"] = st.checkbox(t("norm"), key="norm")
+        if p["norm"]:
+            p["area"] = st.number_input(t("area"), min_value=1e-6, value=0.07, format="%.4f", key="area")
+    if need_pot:
+        ref_sel = st.selectbox(
+            t("ref"), ["none"] + list(REF) + ["custom"], index=1,
+            format_func=lambda r: t("ref_none") if r == "none" else (t("ref_custom") if r == "custom" else r), key="ref",
+        )
+        p["ref"], p["ref_E"] = ref_sel, REF.get(ref_sel, 0.0)
+        if ref_sel == "custom":
+            p["ref"] = st.text_input(t("ref_custom_name"), key="ref_custom_name").strip() or "custom"
+        if ref_sel != "none":
+            p["to_rhe"] = st.checkbox(t("to_rhe"), key="to_rhe")
+        if p["to_rhe"]:
+            if ref_sel == "custom":
+                p["ref_E"] = st.number_input(t("ref_custom_E"), value=0.0, step=0.001, format="%.3f", key="ref_custom_E")
+            ph = st.number_input(t("ph"), value=7.0, step=0.1, key="ph")
+            p["shift"] = p["ref_E"] + 0.0591 * ph
+
+# ================================================================ 2. 数据处理
+with sb.expander(t("grp_proc")):
+    _h("sec_clean")
+    use_hampel = st.checkbox(t("hampel"), key="hampel")
+    win = st.slider(t("win"), 3, 51, 11, step=2, key="win") if use_hampel else 11
+    nsig = st.slider(t("nsig"), 1.0, 8.0, 5.0, 0.5, key="nsig") if use_hampel else 5.0
+    if use_hampel:
+        st.caption(t("hampel_note"))
+    ex_range = st.text_input(t("ex_range"), key="ex_range")
+    ex_idx = st.text_input(t("ex_idx"), key="ex_idx")
+    p["reset_mode"] = st.selectbox(t("reset_mode"), ["all", "head", "off"], index=0, format_func=lambda k: t("reset_" + k), key="reset_mode")
+    st.caption(t("reset_note"))
+
+    st.divider()
+    _h("sec_smooth")
+    p["sm_method"] = st.selectbox(t("sm_method"), ["none", "savgol", "ma", "gauss"], format_func=lambda k: t("sm_" + k), key="sm_method")
+    sm_win, sm_poly, sm_sigma = 11, 3, 2.0
+    p["sm_right"], p["show_raw"] = False, False
+    if p["sm_method"] != "none":
+        if p["sm_method"] in ("savgol", "ma"):
+            sm_win = st.slider(t("sm_win"), 3, 201, 11, step=2, key="sm_win")
+        if p["sm_method"] == "savgol":
+            sm_poly = st.slider(t("sm_poly"), 1, 6, 3, key="sm_poly")
+        if p["sm_method"] == "gauss":
+            sm_sigma = st.slider(t("sm_sigma"), 0.5, 30.0, 2.0, 0.5, key="sm_sigma")
+        if p["dual"]:
+            p["sm_right"] = st.checkbox(t("sm_right"), key="sm_right")
+        p["show_raw"] = st.checkbox(t("sm_raw"), key="sm_raw")
+        st.caption(t("sm_note"))
+
+    st.divider()
+    _h("sec_fit")
+    kind = st.selectbox(t("fit_model"), FITS[mode], format_func=lambda k: t("fit_" + k), key=f"kind_{mode}")
+    deg = st.slider(t("deg"), 1, 6, 2, key="deg") if kind == "poly" else 2
+    fit_range = st.text_input(t("fit_range"), key="fit_range") if kind != "none" else ""
+
+# ================================================================ 3. 坐标轴
+# 每个轴一个小节，顺序统一：标签文字 → 范围 → 主刻度间隔 → 轴的颜色；没开的轴不显示
+with sb.expander(t("grp_axes")):
+    # ---- 下方 x 轴
+    _h("ax_x")
+    p["lab_x"] = st.text_input(t("lab_x"), key="lab_x", help=t("lab_help"))
     r1, r2 = st.columns(2)
     xmin = r1.text_input(t("xmin"), key="xmin")
     xmax = r2.text_input(t("xmax"), key="xmax")
-    x2min = x2max = ""
-    if p.get("dual_x"):
+    stx = st.text_input(t("stepx"), key="step_x")
+    axc_x = st.selectbox(t("ax_color"), AXC, index=0, format_func=lambda k: t("yc_" + k), key="axc_x")
+    xb_cust = st.color_picker(t("color_xb"), "#000000", key="xb_col") if axc_x == "custom" else "#000000"
+
+    # ---- 上方 x 轴
+    p["lab_x2"], x2min, x2max, stx2 = "", "", "", ""
+    axc_x2, xt_cust = "follow", "#000000"
+    if p["dual_x"]:
+        st.divider()
+        _h("ax_x2")
+        p["lab_x2"] = st.text_input(t("lab_x2"), key="lab_x2", help=t("lab_help"))
         r1, r2 = st.columns(2)
         x2min = r1.text_input(t("x2min"), key="x2min")
         x2max = r2.text_input(t("x2max"), key="x2max")
-        
+        stx2 = st.text_input(t("stepx2"), key="step_x2")
+        axc_x2 = st.selectbox(t("ax_color"), AXC, index=1, format_func=lambda k: t("yc_" + k), key="axc_x2")
+        xt_cust = st.color_picker(t("color_xt"), "#000000", key="xt_col") if axc_x2 == "custom" else "#000000"
+
+    # ---- 左 y 轴
+    st.divider()
+    _h("ax_y")
+    p["lab_y"] = st.text_input(t("lab_y"), key="lab_y", help=t("lab_help"))
     r1, r2 = st.columns(2)
     ymin = r1.text_input(t("ymin"), key="ymin")
     ymax = r2.text_input(t("ymax"), key="ymax")
-    y2min = y2max = ""
+    sty = st.text_input(t("stepy"), key="step_y")
+    axc_y = st.selectbox(t("ax_color"), AXC, index=(1 if p["dual"] else 0), format_func=lambda k: t("yc_" + k), key=f"axc_y_{p['dual']}")
+    yl_cust = st.color_picker(t("color_yl"), "#000000", key="yl_col") if axc_y == "custom" else "#000000"
+
+    # ---- 右 y 轴
+    p["lab_y2"], y2min, y2max, sty2 = "", "", "", ""
+    axc_y2, yr_cust = "follow", "#000000"
     if p["dual"]:
+        st.divider()
+        _h("ax_y2")
+        p["lab_y2"] = st.text_input(t("lab_y2"), key="lab_y2", help=t("lab_help"))
         r1, r2 = st.columns(2)
         y2min = r1.text_input(t("y2min"), key="y2min")
         y2max = r2.text_input(t("y2max"), key="y2max")
+        sty2 = st.text_input(t("stepy2"), key="step_y2")
+        axc_y2 = st.selectbox(t("ax_color"), AXC, index=1, format_func=lambda k: t("yc_" + k), key="axc_y2")
+        yr_cust = st.color_picker(t("color_yr"), "#000000", key="yr_col") if axc_y2 == "custom" else "#000000"
 
-# ---- 刻度显示
-with sb.expander(t("sec_ticks")):
+    st.caption(t("lab_note"))
+
+    # ---- 四个轴共用的刻度设置
+    st.divider()
+    _h("sub_ticks_common")
     st.caption(t("tick_marks"))
     cc = st.columns(4)
     p["tick_marks"] = {s: cc[i].checkbox(t("side_" + s), value=True, key=f"tm_{s}") for i, s in enumerate(SIDES)}
     st.caption(t("tick_nums"))
     cc = st.columns(4)
-    num_default = {"bottom": True, "left": True, "top": p.get("dual_x", False), "right": p["dual"]}
+    num_default = {"bottom": True, "left": True, "top": p["dual_x"], "right": p["dual"]}
     p["tick_nums"] = {
-        s: cc[i].checkbox(t("side_" + s), value=num_default[s], key=f"tn_{s}_{p['dual']}") for i, s in enumerate(SIDES)
+        s: cc[i].checkbox(t("side_" + s), value=num_default[s], key=f"tn_{s}_{p['dual']}_{p['dual_x']}")
+        for i, s in enumerate(SIDES)
     }
     p["minor"] = st.checkbox(t("minor"), value=True, key="minor")
     p["tick_dir"] = st.radio(t("tdir"), ["in", "out"], format_func=lambda d: t("dir_" + d), horizontal=True, key="tdir")
-    st.caption(t("step_title"))
-    sc = st.columns(2)
-    stx = sc[0].text_input(t("stepx"), key="step_x")
-    sty = sc[1].text_input(t("stepy"), key="step_y")
-    stx2 = sc[0].text_input(t("stepx2"), key="step_x2") if p.get("dual_x") else ""
-    sty2 = sc[1].text_input(t("stepy2"), key="step_y2") if p["dual"] else ""
 
-# ---- 颜色
-with sb.expander(t("sec_color"), expanded=True):
-    p["colors"] = []
+# ================================================================ 4. 曲线与图例
+with sb.expander(t("grp_curves"), expanded=True):
+    _h("sub_curves")
+    p["colors"], p["colors_x2"] = [], []
     for k, name in enumerate(dfs):
         stem = Path(name).stem
         if p["dual"]:
@@ -1368,27 +1564,36 @@ with sb.expander(t("sec_color"), expanded=True):
             cl = st.color_picker(t("color_curve", name=stem), COLORS[k % 7], key=f"cl_s_{name}")
             cr = None
         p["colors"].append((cl, cr))
+        if p["dual_x"]:
+            cx = st.color_picker(
+                t("color_x2curve", name=stem), COLORS[(2 * k + (2 if p["dual"] else 1)) % 7], key=f"cx_{name}_{p['dual']}"
+            )
+        else:
+            cx = None
+        p["colors_x2"].append(cx)
     p["fit_color"] = st.color_picker(t("color_fit"), "#000000", key="cfit") if kind != "none" else "#000000"
-    st.divider()
-    yc_mode = st.selectbox(
-        t("yaxis_color"), ["black", "follow", "custom"], index=(1 if p["dual"] else 0),
-        format_func=lambda k: t("yc_" + k), key=f"yc_mode_{p['dual']}",
-    )
-    p["yl_col"], p["yr_col"], p["xt_col"] = "#000000", "#000000", "#000000"
-    if yc_mode == "follow":
-        p["yl_col"] = p["colors"][0][0]
-        p["yr_col"] = p["colors"][0][1] or "#000000"
-        p["xt_col"] = p["colors"][0][0]
-    elif yc_mode == "custom":
-        p["yl_col"] = st.color_picker(t("color_yl"), "#000000", key="yl_col")
-        if p["dual"]:
-            p["yr_col"] = st.color_picker(t("color_yr"), "#000000", key="yr_col")
-        if p.get("dual_x"):
-            p["xt_col"] = st.color_picker(t("color_xt"), "#000000", key="xt_col")
+    p["scatter"] = st.checkbox(t("scatter"), value=(mode != "CV"), key=f"scatter_{mode}")
+    p["show_peaks"] = st.checkbox(t("show_peaks"), key="show_peaks") if mode == "CV" else False
 
-# ---- 自定义图例文字
-with sb.expander(t("sec_leg_text")):
-    p["custom_legends"] = []
+    st.divider()
+    _h("sub_legend")
+    p["legend"] = st.checkbox(t("legend"), value=True, key="legend")
+    p["legend_loc"] = st.selectbox(
+        t("legend_loc"), ["best", "upper right", "upper left", "lower right", "lower left", "manual"],
+        format_func=lambda k: t("leg_manual") if k == "manual" else k, key="leg_loc",
+    )
+    p["legend_xy"] = (0.02, 0.98)
+    if p["legend_loc"] == "manual":
+        lc = st.columns(2)
+        p["legend_xy"] = (
+            lc[0].number_input(t("leg_x"), value=0.02, step=0.05, format="%.2f", key="leg_pos_x"),
+            lc[1].number_input(t("leg_y"), value=0.98, step=0.05, format="%.2f", key="leg_pos_y"),
+        )
+        st.caption(t("leg_manual_note"))
+    p["legend_ncol"] = int(st.number_input(t("leg_ncol"), min_value=1, max_value=6, value=1, step=1, key="leg_ncol"))
+    p["legend_frame"] = st.checkbox(t("leg_frame"), value=False, key="leg_frame")
+    st.caption(t("sec_leg_text"))
+    p["custom_legends"], p["custom_legends_x2"] = [], []
     for k, name in enumerate(dfs):
         stem = Path(name).stem
         if p["dual"]:
@@ -1398,16 +1603,30 @@ with sb.expander(t("sec_leg_text")):
         else:
             val = st.text_input(t("leg_text_single", name=stem), key=f"leg_s_{name}_{p['dual']}")
             p["custom_legends"].append((val.strip(), ""))
+        if p["dual_x"]:
+            x_val = st.text_input(t("leg_text_x2", name=stem), key=f"leg_x_{name}")
+            p["custom_legends_x2"].append(x_val.strip())
+        else:
+            p["custom_legends_x2"].append("")
 
-# ---- 轴标签
-with sb.expander(t("sec_labels")):
-    p["lab_x"] = st.text_input(t("lab_x"), key="lab_x", help=t("lab_help"))
-    p["lab_x2"] = st.text_input(t("lab_x2"), key="lab_x2", help=t("lab_help")) if p.get("dual_x") else ""
-    p["lab_y"] = st.text_input(t("lab_y"), key="lab_y", help=t("lab_help"))
-    p["lab_y2"] = st.text_input(t("lab_y2"), key="lab_y2", help=t("lab_help")) if p["dual"] else ""
-    st.caption(t("lab_note"))
+# 轴的颜色：三选一（黑色 / 跟随曲线 / 自定义）。要等曲线颜色确定后才能解析“跟随”
+def _axis_color(mode_, custom, follow):
+    return "#000000" if mode_ == "black" else (follow if mode_ == "follow" else custom)
 
-# ---- AI 分析设置
+
+_c0l, _c0r = p["colors"][0]
+p["xb_col"] = _axis_color(axc_x, xb_cust, _c0l)
+p["yl_col"] = _axis_color(axc_y, yl_cust, _c0l)
+p["yr_col"] = _axis_color(axc_y2, yr_cust, _c0r or "#000000") if p["dual"] else "#000000"
+p["xt_col"] = _axis_color(axc_x2, xt_cust, p["colors_x2"][0] or "#000000") if p["dual_x"] else "#000000"
+
+# ================================================================ 5. 图形外观
+with sb.expander(t("grp_fig")):
+    p["w"] = st.selectbox(t("width"), [85, 120, 175], format_func=lambda w: t(f"w{w}"), key="width")
+    p["h"] = st.slider(t("height"), 40, 120, 65, key="height")
+    p["fs"] = st.slider(t("fontsize"), 6, 14, 9, key="fs")
+
+# ================================================================ 6. AI 分析设置
 with sb.expander(t("sec_ai")):
     ai_key_typed = st.text_input(t("ai_key"), type="password", key="ai_key", help=t("ai_key_help"))
     ai_model = st.text_input(t("ai_model"), value="gemini-3.8-flash", key="ai_model", help=t("ai_model_help"))
@@ -1442,41 +1661,36 @@ for name, df in dfs.items():
     idx = d.index.to_numpy().copy()
     x, y_raw = transform(d.iloc[:, xi].to_numpy(float).copy(), d.iloc[:, yi].to_numpy(float).copy(), mode, p)
     
-    if p.get("x_to_min"):
-        x = x / 60.0
+    if mode != "CV":
+        x = time_conv(x, p["time_unit"])
         
     y2_raw = transform_y2(d.iloc[:, y2i].to_numpy(float).copy(), y2kind, p) if p["dual"] else None
+    x2_raw = transform_x2(d.iloc[:, x2i].to_numpy(float).copy(), x2kind, p) if p["dual_x"] else None
     keep = np.isfinite(x) & np.isfinite(y_raw)
     if y2_raw is not None:
         keep &= np.isfinite(y2_raw)
+    if x2_raw is not None:
+        keep &= np.isfinite(x2_raw)
     if use_hampel:
         keep &= ~hampel(y_raw, win, nsig)
     for lo, hi in bad_ranges:
         keep &= ~((x >= lo) & (x <= hi))
     keep &= ~np.isin(idx, list(bad_idx))
     
-    if p.get("reset_index_and_x") and keep.any():
-        x = x.copy()
+    x2 = x2_raw
+    if p["reset_mode"] != "off" and keep.any():
         idx = idx.copy()
-        idx[keep] = np.arange(keep.sum())
-        
-        kept_indices = np.where(keep)[0]
-        if len(kept_indices) > 0:
-            diffs = np.diff(x)
-            pos_diffs = diffs[np.abs(diffs) > 1e-12]
-            dx_default = np.median(pos_diffs) if len(pos_diffs) > 0 else 1.0
-            
-            new_x_kept = np.zeros(len(kept_indices))
-            new_x_kept[0] = 0.0
-            for i in range(1, len(kept_indices)):
-                prev_idx = kept_indices[i-1]
-                curr_idx = kept_indices[i]
-                if curr_idx == prev_idx + 1:
-                    step = x[curr_idx] - x[prev_idx]
-                else:
-                    step = dx_default
-                new_x_kept[i] = new_x_kept[i-1] + step
-            x[keep] = new_x_kept
+        if p["reset_mode"] == "all":
+            idx[keep] = np.arange(keep.sum())
+            fix = renumber_x
+        else:
+            idx[keep] = idx[keep] - idx[keep][0]
+            fix = shift_head
+        # 递补只针对时间轴：CV 的横坐标是电位，不能平移
+        if mode != "CV":
+            x = fix(x, keep)
+        if x2 is not None and x2kind == "time":
+            x2 = fix(x2, keep)
 
     y, y2 = y_raw.copy(), (y2_raw.copy() if y2_raw is not None else None)
     if p["sm_method"] != "none":
@@ -1523,6 +1737,8 @@ for name, df in dfs.items():
             "ylab": short(cols[yi]),
             "y2lab": short(cols[y2i]),
             "y2name": cols[y2i],
+            "x2": x2,
+            "x2name": cols[x2i],
         }
     )
 
@@ -1641,6 +1857,8 @@ payload = {
 }
 if p["dual"]:
     payload["axes"]["y_right"] = p["lab_y2"] or y2_label(p, p["y2kind"], results[0]["y2name"])
+if p["dual_x"]:
+    payload["axes"]["x_top"] = p["lab_x2"] or x2_label(p, p["x2kind"], results[0]["x2name"])
 payload_json = json.dumps(payload, ensure_ascii=False, indent=1, default=str)
 question = ai_q.strip() or "Please analyze this data."
 user_text = f"{question}\n\nData summary (JSON):\n\n```json\n{payload_json}\n```"
