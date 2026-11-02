@@ -34,7 +34,13 @@ except ImportError:
 MM = 1 / 25.4
 COLORS = ["#0072B2", "#D55E00", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#000000"]
 CUR = {"A": 1.0, "mA": 1e-3, "µA": 1e-6, "nA": 1e-9}
-REF = {"Ag/AgCl (sat. KCl)": 0.197, "SCE": 0.241, "Hg/HgO (1 M NaOH)": 0.098, "Hg/Hg₂SO₄": 0.615}
+REF = {
+    "SHE": 0.000,
+    "Ag/AgCl (sat. KCl)": 0.197,
+    "SCE": 0.241,
+    "Hg/HgO (1 M NaOH)": 0.098,
+    "Hg/Hg₂SO₄": 0.615,
+}
 FITS = {
     "CV": ["none", "linear", "poly"],
     "CA": ["none", "cottrell", "exp", "linear", "poly"],
@@ -76,11 +82,27 @@ TR = {
         "grp_proc": "数据处理",
         "grp_axes": "坐标轴",
         "grp_curves": "曲线与图例",
+        "grp_textbox": "自定义文本框 / 标注",
         "grp_fig": "图形外观",
         "sub_cols": "数据列",
         "sub_rows": "使用的行范围",
         "sub_curves": "曲线颜色",
         "sub_legend": "图例",
+        "num_tb": "文本框数量",
+        "tb_title": "文本框 #{n}",
+        "tb_text": "文本内容（支持 $E_{{pa}}$ 等公式）",
+        "tb_coord": "坐标类型",
+        "coord_data": "数据坐标 (Data)",
+        "coord_rel": "相对坐标 (0 左/下 -> 1 右/上)",
+        "tb_x": "x 坐标",
+        "tb_y": "y 坐标",
+        "tb_fs": "字号 / pt",
+        "tb_color": "文本颜色",
+        "tb_frame": "边框样式",
+        "frame_none": "无边框透明背景",
+        "frame_box": "圆角框 (半透明背景)",
+        "frame_solid": "方框 (白色实背景)",
+        "tb_rot": "旋转角度 / °",
         "ax_x": "下方 x 轴",
         "ax_x2": "上方 x 轴 (x2)",
         "ax_y": "左 y 轴",
@@ -91,9 +113,14 @@ TR = {
         "color_x2curve": "{name} 上方 x 轴曲线颜色",
         "leg_text_x2": "{name} (上方 x 轴) 图例名称",
         "time_unit": "时间单位（原始数据按秒）",
-        "ref_custom": "自定义…",
-        "ref_custom_name": "参比电极名称（显示在轴标签里）",
-        "ref_custom_E": "该电极相对 SHE 的电位 / V（换算 RHE 用）",
+        "pot_target": "电位基准 / 换算目标",
+        "pot_raw": "保持原始电位 (vs. 参比)",
+        "to_she": "换算为 SHE (vs. SHE)",
+        "to_rhe": "换算为 RHE (vs. RHE)",
+        "custom_offset": "自定义电位偏移量 / V（可输入任意数字加到坐标轴上）",
+        "ref_custom": "自定义参比电极…",
+        "ref_custom_name": "自定义参比电极名称（显示在轴标签）",
+        "ref_custom_E": "该参比电极相对 SHE 的电位 / V",
         "reset_mode": "剔除点后坐标递补",
         "reset_all": "全部收拢（所有被剔除的空档都补上）",
         "reset_head": "只收拢开头（第一个保留点归零，中间空档保留）",
@@ -130,7 +157,6 @@ TR = {
         "area": "电极面积 / cm²",
         "ref": "参比电极",
         "ref_none": "无（不标注参比电极）",
-        "to_rhe": "换算为 RHE",
         "ph": "溶液 pH",
         "sec_clean": "坏点剔除",
         "hampel": "自动检测离群点（Hampel）",
@@ -187,7 +213,7 @@ TR = {
         "stepy2": "右 y 间隔",
         "stepx2": "上方 x 间隔",
         "warn_step": "主刻度间隔太小，会产生过多刻度，这一项已被忽略。",
-        "lab_note": "**上下角标的写法**：用 `$` 括住要变角标的部分，`^` 表示上标，`_` 表示下标，多个字符用 `{}` 括起来。  \n例：`cm$^{-2}$` → cm⁻²；`H$_2$O$_2$` → H₂O₂；`$E_{pa}$` → E 加下标 pa；`$\\mu$A` → µA。  \n注意：`$` 要成对，符号必须是英文半角。含汉字的标签里，角标会自动换成 Unicode 字符，大写字母的下标不支持。",
+        "lab_note": "**上下角标的写法**：用 `$` 括住要变角标的部分，`^` 表示上标，`_` 表示下标，多个字符用 `{}` 括起来。  \n例：`cm$^{-2}$` → cm⁻²；`H$_2$O$_2$` → H₂O₂；`$E_{pa}$` → E 加下标 pa；`$\\mu$A` → µA。",
         "sec_ticks": "刻度显示",
         "tick_marks": "刻度线（显示哪几边）",
         "tick_nums": "刻度数字（显示哪几边）",
@@ -219,28 +245,28 @@ TR = {
         "lab_x2": "上方 x 轴标签 (x2)",
         "lab_y": "左 y 轴标签",
         "lab_y2": "右 y 轴标签",
-        "lab_help": "上标：`cm$^{-2}$`；下标：`H$_2$O$_2$`；斜体变量加下标：`$E_{pa}$`；希腊字母：`$\\mu$A`。$ 必须成对，上下标有多个字符时用 {} 括起来。含汉字时，上下标会自动换成 Unicode 字符，此时大写字母的下标不支持。",
+        "lab_help": "上标：`cm$^{-2}$`；下标：`H$_2$O$_2$`；斜体变量加下标：`$E_{pa}$`；希腊字母：`$\\mu$A`。",
         "sec_ai": "AI 分析",
-        "ai_intro": "把处理后的数据摘要（峰位、拟合参数、统计量等）发给 Gemini，让它帮你解读。发送的是摘要，不是原始数据文件；发送前可以在下面展开查看具体内容。",
-        "ai_warn": "AI 的解读可能有误，仅供参考，请对照原始数据和文献自行核对。发送的内容会经过 Google 的服务器，未发表的数据请谨慎处理。",
+        "ai_intro": "把处理后的数据摘要发给 Gemini 辅助分析。",
+        "ai_warn": "仅供参考，请核对原始数据。",
         "ai_key": "API 密钥",
-        "ai_key_help": "只在本次使用中保存在内存里，不会写入文件。不要把密钥写进代码，也不要上传到 GitHub。",
+        "ai_key_help": "仅在内存中保存。",
         "ai_model": "模型",
-        "ai_model_help": "填写 Google Gemini API 的模型名称。当前默认模型为 gemini-3.8-flash。",
+        "ai_model_help": "Google Gemini 模型名称。",
         "ai_ctx": "实验背景（可选）",
         "ai_ctx_ph": "例如：多孔金电极，0.1 M PBS，检测葡萄糖",
         "ai_scan": "扫速 / mV s⁻¹（CV，可选）",
         "ai_q": "想问 AI 的问题（可选）",
-        "ai_sendcurve": "同时发送降采样的曲线数据（每条最多 60 点）",
+        "ai_sendcurve": "同时发送降采样的曲线数据",
         "ai_preview": "查看将发送给 AI 的内容",
         "ai_btn": "生成 AI 分析",
         "ai_spin": "AI 分析中……",
-        "ai_nokey": "请先在侧边栏的“AI 分析”里填写 API 密钥。",
-        "ai_nopkg": "没有安装 google-genai 包，请运行：pip install google-genai",
+        "ai_nokey": "请填写 API 密钥。",
+        "ai_nopkg": "未安装 google-genai 包。",
         "ai_fail": "AI 调用失败：{err}",
-        "ai_stale": "（这条分析是按之前的数据和设置生成的，改过参数后请重新生成。）",
+        "ai_stale": "（之前的数据生成的分析结果，修改参数后请重新生成。）",
         "sec_peaks": "CV 峰分析",
-        "pk_note": "峰电流未做基线校正，单位同 y 轴；扫描方向由电位变化推断，默认氧化电流为正。使用了平滑时，峰是在平滑后的曲线上找的。",
+        "pk_note": "峰电流未做基线校正，单位同 y 轴。",
         "pk_none": "没有检测到明显的氧化或还原峰。",
         "tab_static": "静态预览（出版样式）",
         "tab_inter": "交互查看（悬停读数）",
@@ -250,15 +276,15 @@ TR = {
         "hv_x": "同一 x 处的所有曲线",
         "crosshair": "显示十字准线",
         "show_removed": "显示被剔除的点（红色 ×）",
-        "inter_hint": "鼠标放在曲线上会显示坐标和行号，行号可以直接填进“按行号剔除”。滚轮缩放，拖动平移，双击还原。这里只用于查看，导出的图以“静态预览”为准。",
-        "no_plotly": "没有安装 plotly，请运行：pip install plotly",
+        "inter_hint": "鼠标悬停查看坐标与行号。",
+        "no_plotly": "未安装 plotly。",
         "show_peaks": "在图上标注峰位（CV）",
         "tbl_only_kept": "只保留未被剔除的点",
         "tbl_file_sel": "选择文件",
         "tbl_dl": "下载处理后的数据（CSV）",
-        "tbl_hint": "这里是剔除坏点、平滑和单位换算之后的数据，可以直接导入 Origin 或 Excel。",
-        "warn_range": "剔除或拟合范围的格式有误，请检查。",
-        "preview_caption": "预览（红色 × 为已剔除的点，导出时不含）",
+        "tbl_hint": "已处理的数据，可直接导入 Origin/Excel。",
+        "warn_range": "剔除或拟合范围格式有误。",
+        "preview_caption": "预览（红色 × 为剔除点，导出时不含）",
         "results": "结果",
         "tbl_file": "文件",
         "tbl_removed": "剔除点数",
@@ -270,7 +296,7 @@ TR = {
         "dpi": "分辨率 (dpi)",
         "fname": "文件名",
         "dl": "下载图片",
-        "dl_hint": "PDF、SVG 是矢量图，放大不会模糊；PNG、TIFF 是位图。图上英文使用 Times New Roman，日文汉字使用明朝体，需要电脑里装有对应字体。",
+        "dl_hint": "PDF/SVG 为矢量图；PNG/TIFF 为位图。",
     },
     "ja": {
         "title": "電気化学 論文用グラフ作成ツール",
@@ -280,100 +306,120 @@ TR = {
         "mode_CP": "CP クロノポテンショメトリー（定電流）",
         "upload": "データをアップロード（複数可・重ね描き用）",
         "use_demo": "ファイル未選択のときはサンプルデータを使う",
-        "enc": "ファイルの文字コード（文字化けしたときに手動で選択）",
+        "enc": "ファイルの文字コード",
         "enc_auto": "自動判定",
         "enc_utf8": "UTF-8",
         "enc_gbk": "GBK（中国語 Windows）",
         "enc_sjis": "Shift-JIS（日本語 Windows）",
-        "info_upload": "装置から出力した txt / CSV / xlsx をアップロードするか、左のサンプルデータを選んで試してください。",
-        "demo_note": "いま表示しているのはサンプルデータで、あなたのデータではありません。",
-        "parse_fail": "{name} の読み込みに失敗しました：{err}",
-        "err_two_cols": "データには少なくとも2列必要です。",
+        "info_upload": "データファイルをアップロードしてください。",
+        "demo_note": "サンプルデータを表示中。",
+        "parse_fail": "{name} の読み込み失敗：{err}",
+        "err_two_cols": "データには2列以上必要です。",
         "sec_data": "データ列",
         "grp_data": "データ",
         "grp_proc": "データ処理",
         "grp_axes": "軸",
         "grp_curves": "曲線と凡例",
+        "grp_textbox": "カスタムテキスト / 注釈",
         "grp_fig": "図の外観",
         "sub_cols": "データ列",
         "sub_rows": "使用する行の範囲",
         "sub_curves": "曲線の色",
         "sub_legend": "凡例",
+        "num_tb": "テキストボックスの数",
+        "tb_title": "テキストボックス #{n}",
+        "tb_text": "テキスト内容（$E_{{pa}}$ 数式対応）",
+        "tb_coord": "座標モード",
+        "coord_data": "データ座標 (Data)",
+        "coord_rel": "相対座標 (0 左/下 -> 1 右/上)",
+        "tb_x": "x 座標",
+        "tb_y": "y 座標",
+        "tb_fs": "文字サイズ / pt",
+        "tb_color": "文字色",
+        "tb_frame": "枠線のスタイル",
+        "frame_none": "枠線なし・背景透明",
+        "frame_box": "角丸枠 (半透明背景)",
+        "frame_solid": "四角枠 (白背景)",
+        "tb_rot": "回転角度 / °",
         "ax_x": "下部 x 軸",
         "ax_x2": "上部 x 軸 (x2)",
         "ax_y": "左 y 軸",
         "ax_y2": "右 y 軸 (y2)",
-        "ax_color": "軸の色（ラベル・目盛り・軸線）",
+        "ax_color": "軸の色",
         "color_xb": "下部 x 軸の色",
-        "sub_ticks_common": "目盛りの設定（全軸共通）",
+        "sub_ticks_common": "目盛りの設定",
         "color_x2curve": "{name} 上部 x 軸の曲線の色",
         "leg_text_x2": "{name} (上部 x 軸) 凡例",
-        "time_unit": "時間の単位（元データは秒）",
-        "ref_custom": "カスタム…",
-        "ref_custom_name": "参照電極の名称（軸ラベルに表示）",
-        "ref_custom_E": "この電極の SHE 基準の電位 / V（RHE 換算用）",
+        "time_unit": "時間の単位",
+        "pot_target": "電位基準の換算",
+        "pot_raw": "換算なし (vs. 参照電極)",
+        "to_she": "SHE に換算 (vs. SHE)",
+        "to_rhe": "RHE に換算 (vs. RHE)",
+        "custom_offset": "カスタム電位オフセット / V",
+        "ref_custom": "カスタム参照電極…",
+        "ref_custom_name": "参照電極の名称",
+        "ref_custom_E": "SHE 基準の電位 / V",
         "reset_mode": "除去後の座標の詰め方",
-        "reset_all": "すべて詰める（除去した隙間をすべて埋める）",
-        "reset_head": "先頭だけ詰める（最初の残った点を 0 に、途中の隙間は残す）",
+        "reset_all": "すべて詰める",
+        "reset_head": "先頭だけ詰める",
         "reset_off": "詰めない",
-        "reset_note": "詰める処理は時間軸にだけ働きます。CV の電位は変更されません。",
+        "reset_note": "時間軸にのみ適用されます。",
         "leg_manual": "位置を手動指定",
         "leg_x": "凡例 x（0 左 → 1 右）",
         "leg_y": "凡例 y（0 下 → 1 上）",
-        "leg_manual_note": "凡例の左上を基準点とし、座標は描画領域に対する比率です。0–1 の範囲外にして図の外に置くこともできます。",
+        "leg_manual_note": "描画領域に対する比率です。",
         "leg_ncol": "凡例の列数",
         "leg_frame": "凡例の枠を表示",
-        "x2_note": "上部 x 軸：選んだ列を横軸にして、左 y 軸のデータをもう一本描きます（色・凡例名は個別に設定できます）。種類で「電位」を選ぶと参照電極換算、「時間」を選ぶと「時間の単位」が適用されます。",
+        "x2_note": "上部 x 軸の設定。",
         "xcol": "x 列",
         "ycol": "y 列（左軸）",
         "start": "開始行",
         "end": "終了行（0=最後まで）",
         "x_to_min": "時間軸を分に変換 (÷60)",
-        "sec_dual": "二軸の設定 (x2 / y2)",
+        "sec_dual": "二軸の設定",
         "dual": "右側に第2の y 軸を使う (y2)",
         "dual_x": "上部に第2の x 軸を使う (x2)",
         "y2col": "右軸のデータ列",
-        "y2kind": "右軸の物理量の種類",
+        "y2kind": "右軸の種類",
         "x2col": "上部 x 軸データ列",
-        "x2kind": "上部 x 軸の物理量の種類",
+        "x2kind": "上部 x 軸の種類",
         "color_xt": "上部 x 軸の色",
-        "kind_cur": "電流（単位換算あり）",
-        "kind_pot": "電位（参照電極換算あり）",
-        "kind_time": "時間（換算なし）",
-        "kind_other": "その他（換算しない）",
+        "kind_cur": "電流",
+        "kind_pot": "電位",
+        "kind_time": "時間",
+        "kind_other": "その他",
         "sec_units": "単位と参照電極",
         "cur_raw": "元の電流単位",
         "cur_out": "出力する電流単位",
-        "norm": "電極面積で規格化して電流密度にする",
+        "norm": "電流密度にする",
         "area": "電極面積 / cm²",
         "ref": "参照電極",
-        "ref_none": "なし（参照電極を記載しない）",
-        "to_rhe": "RHE に換算",
+        "ref_none": "なし",
         "ph": "溶液の pH",
         "sec_clean": "外れ値の除去",
-        "hampel": "外れ値を自動検出（Hampel）",
+        "hampel": "外れ値を自動検出",
         "win": "ウィンドウ（点）",
-        "hampel_note": "ウィンドウが小さすぎたりしきい値が低すぎたりすると、正常なデータ点まで外れ値と判定されます。まず初期値で試し、プレビューの赤い × が本当のスパイクにだけ付いているか確認してください。",
+        "hampel_note": "適切な閾値を設定してください。",
         "nsig": "しきい値（σ）",
-        "ex_range": "x 範囲で除外（グラフ上の座標。例 0.1:0.2; 5:6）",
-        "ex_idx": "行番号で除外（例 5, 10-12）",
-        "reset_idx": "除外後、座標と行番号をゼロから再配置",
+        "ex_range": "x 範囲で除外",
+        "ex_idx": "行番号で除外",
+        "reset_idx": "ゼロから再配置",
         "sec_smooth": "平滑化",
         "sm_method": "平滑化の方法",
         "sm_none": "平滑化しない",
         "sm_savgol": "Savitzky–Golay",
         "sm_ma": "移動平均",
         "sm_gauss": "ガウシアンフィルタ",
-        "sm_win": "ウィンドウ幅（点・奇数）",
+        "sm_win": "ウィンドウ幅",
         "sm_poly": "多項式の次数",
-        "sm_sigma": "σ（点）",
-        "sm_right": "右軸の曲線も平滑化する",
-        "sm_raw": "元データも薄い色で重ねて表示",
-        "sm_note": "フィッティングには、外れ値を除いた平滑化前のデータを使います。",
-        "sec_fit": "フィッティング（左軸の曲線が対象）",
+        "sm_sigma": "σ",
+        "sm_right": "右軸も平滑化",
+        "sm_raw": "元データも重ねて表示",
+        "sm_note": "フィットには元データを使用。",
+        "sec_fit": "フィッティング",
         "fit_model": "モデル",
         "deg": "多項式の次数",
-        "fit_range": "フィット範囲（グラフ上の x 座標。例 5:60、空欄で全体）",
+        "fit_range": "フィット範囲",
         "fit_none": "フィットしない",
         "fit_linear": "直線",
         "fit_poly": "多項式",
@@ -386,10 +432,10 @@ TR = {
         "w175": "2 段 175 mm",
         "height": "高さ / mm",
         "fontsize": "文字サイズ / pt",
-        "scatter": "データを点で表示",
+        "scatter": "点で表示",
         "legend": "凡例を表示",
         "legend_loc": "凡例の位置",
-        "sec_range": "軸の範囲（空欄で自動）",
+        "sec_range": "軸の範囲",
         "xmin": "x 最小",
         "xmax": "x 最大",
         "ymin": "y 最小",
@@ -398,22 +444,22 @@ TR = {
         "y2max": "右 y 最大",
         "x2min": "上部 x2 最小",
         "x2max": "上部 x2 最大",
-        "warn_num": "軸の範囲と目盛りの間隔には数値を入力してください（間隔は 0 より大きい値）。",
-        "step_title": "主目盛りの間隔（空欄で自動）",
+        "warn_num": "数値を入力してください。",
+        "step_title": "主目盛りの間隔",
         "stepx": "x 間隔",
         "stepy": "y 間隔",
         "stepy2": "右 y 間隔",
         "stepx2": "上部 x 間隔",
-        "warn_step": "主目盛りの間隔が小さすぎて目盛りが多くなりすぎるため、この設定は無視しました。",
-        "lab_note": "**上付き・下付きの書き方**：添字にしたい部分を `$` で囲み、`^` が上付き、`_` が下付きです。複数文字のときは `{}` で囲みます。  \n例：`cm$^{-2}$` → cm⁻²、`H$_2$O$_2$` → H₂O₂、`$E_{pa}$` → E に下付き pa、`$\\mu$A` → µA。  \n注意：`$` は必ず対にし、記号は半角の英数字を使います。漢字を含むラベルでは添字が Unicode 文字に自動変換されるため、大文字の下付きは使えません。",
+        "warn_step": "間隔が小さすぎるため無視されました。",
+        "lab_note": "添字は $ で囲んで入力してください。",
         "sec_ticks": "目盛りの表示",
-        "tick_marks": "目盛り線（表示する辺）",
-        "tick_nums": "目盛りの数値（表示する辺）",
+        "tick_marks": "目盛り線",
+        "tick_nums": "目盛りの数値",
         "side_bottom": "下",
         "side_left": "左",
         "side_top": "上",
         "side_right": "右",
-        "minor": "補助目盛りを表示",
+        "minor": "補助目盛り表示",
         "tdir": "目盛りの向き",
         "dir_in": "内向き",
         "dir_out": "外向き",
@@ -422,80 +468,79 @@ TR = {
         "color_left": "{name} 左軸の曲線の色",
         "color_right": "{name} 右軸の曲線の色",
         "color_fit": "フィット線の色",
-        "yaxis_color": "y 轴の色（ラベル・目盛り・軸線）",
+        "yaxis_color": "y 軸の色",
         "yc_black": "黒",
         "yc_follow": "曲線の色に合わせる",
         "yc_custom": "カスタム",
         "color_yl": "左 y 軸の色",
         "color_yr": "右 y 軸の色",
-        "sec_leg_text": "凡例テキストの変更（空欄でデフォルト）",
+        "sec_leg_text": "凡例テキストの変更",
         "leg_text_single": "{name} の凡例",
         "leg_text_left": "{name} (左軸) 凡例",
         "leg_text_right": "{name} (右軸) 凡例",
-        "sec_labels": "軸ラベル（空欄で自動）",
+        "sec_labels": "軸ラベル",
         "lab_x": "x 軸ラベル",
         "lab_x2": "上部 x 軸ラベル (x2)",
         "lab_y": "左 y 軸ラベル",
         "lab_y2": "右 y 軸ラベル",
-        "lab_help": "上付き：`cm$^{-2}$`、下付き：`H$_2$O$_2$`、斜体の変数と添字：`$E_{pa}$`、ギリシャ文字：`$\\mu$A`。$ は必ず対にし、添字が複数文字のときは {} で囲みます。漢字を含むラベルでは添字が Unicode 文字に自動変換されるため、大文字の下付きは使えません。",
+        "lab_help": "添字の設定方法。",
         "sec_ai": "AI 分析",
-        "ai_intro": "処理後のデータの要約（ピーク位置、フィットのパラメータ、統計量など）を Gemini に送り、解釈してもらいます。送るのは要約で、元のデータファイルではありません。送信前に下で内容を確認できます。",
-        "ai_warn": "AI の解釈は誤っていることがあります。参考程度にとどめ、元のデータや文献と照らして確認してください。送信内容は Google のサーバーを経由します。未発表のデータの扱いにはご注意ください。",
+        "ai_intro": "Gemini による解析補助。",
+        "ai_warn": "参考用としてご利用ください。",
         "ai_key": "API キー",
-        "ai_key_help": "今回の利用中だけメモリ上に保持し、ファイルには書き込みません。キーをコードに書いたり、GitHub にアップロードしたりしないでください。",
+        "ai_key_help": "メモリ内にのみ保存。",
         "ai_model": "モデル",
-        "ai_model_help": "Google Gemini API のモデル名を入力します。デフォルトは gemini-3.8-flash です。",
-        "ai_ctx": "実験の背景（任意）",
-        "ai_ctx_ph": "例：多孔質金電極、0.1 M PBS、グルコース検出",
-        "ai_scan": "掃引速度 / mV s⁻¹（CV・任意）",
+        "ai_model_help": "Google Gemini モデル名。",
+        "ai_ctx": "実験背景（任意）",
+        "ai_ctx_ph": "例：多孔質金電極、0.1 M PBS",
+        "ai_scan": "掃引速度 / mV s⁻¹",
         "ai_q": "AI への質問（任意）",
-        "ai_sendcurve": "間引いた曲線データも送る（1 本あたり最大 60 点）",
-        "ai_preview": "AI に送る内容を確認する",
+        "ai_sendcurve": "間引いた曲線データも送信",
+        "ai_preview": "送信内容の確認",
         "ai_btn": "AI 分析を実行",
-        "ai_spin": "AI が分析中……",
-        "ai_nokey": "先にサイドバーの「AI 分析」で API キーを入力してください。",
-        "ai_nopkg": "google-genai パッケージがありません。pip install google-genai を実行してください。",
-        "ai_fail": "AI の呼び出しに失敗しました：{err}",
-        "ai_stale": "（この分析は以前のデータと設定で作られたものです。設定を変えたら再実行してください。）",
+        "ai_spin": "分析中……",
+        "ai_nokey": "API キーを入力してください。",
+        "ai_nopkg": "google-genai がありません。",
+        "ai_fail": "呼び出し失敗：{err}",
+        "ai_stale": "（過去の設定による結果です。）",
         "sec_peaks": "CV ピーク解析",
-        "pk_note": "ピーク電流はベースライン補正なしで、単位は y 軸と同じです。掃引方向は電位の変化から推定し、酸化電流を正としています。平滑化した場合は平滑化後の曲線でピークを探します。",
-        "pk_none": "明確な酸化・還元ピークは検出されませんでした。",
+        "pk_note": "ベースライン補正なし。",
+        "pk_none": "ピークは検出されませんでした。",
         "tab_static": "静的プレビュー（論文用）",
-        "tab_inter": "インタラクティブ表示（ホバーで読み取り）",
+        "tab_inter": "インタラクティブ表示",
         "tab_table": "処理後のデータ",
         "hover_mode": "ホバーの方式",
         "hv_closest": "最も近いデータ点",
-        "hv_x": "同じ x のすべての曲線",
-        "crosshair": "十字線を表示",
-        "show_removed": "除外した点を表示（赤い ×）",
-        "inter_hint": "カーソルを曲線に重ねると座標と行番号が表示されます。行番号は「行番号で除外」にそのまま入力できます。ホイールで拡大縮小、ドラッグで移動、ダブルクリックで元に戻ります。ここは確認用で、出力される図は「静的プレビュー」の内容です。",
-        "no_plotly": "plotly がインストールされていません。pip install plotly を実行してください。",
-        "show_peaks": "ピーク位置を図に表示（CV）",
+        "hv_x": "同じ x の全曲線",
+        "crosshair": "十字線表示",
+        "show_removed": "除外点を表示（赤 ×）",
+        "inter_hint": "カーソル重ねで読み取り可能。",
+        "no_plotly": "plotly がありません。",
+        "show_peaks": "ピーク位置を表示（CV）",
         "tbl_only_kept": "除外していない点のみ",
-        "tbl_file_sel": "ファイルを選択",
-        "tbl_dl": "処理後のデータをダウンロード（CSV）",
-        "tbl_hint": "外れ値の除去、平滑化、単位換算をした後のデータです。Origin や Excel にそのまま取り込めます。",
-        "warn_range": "除外またはフィット範囲の書式が正しくありません。",
-        "preview_caption": "プレビュー（赤い × は除外した点。出力した図には含まれません）",
+        "tbl_file_sel": "ファイル選択",
+        "tbl_dl": "処理後データダウンロード（CSV）",
+        "tbl_hint": "Origin/Excel 用データ。",
+        "warn_range": "書式エラー。",
+        "preview_caption": "プレビュー",
         "results": "結果",
         "tbl_file": "ファイル",
-        "tbl_removed": "除外した点数",
+        "tbl_removed": "除外点数",
         "tbl_params": "パラメータ",
         "tbl_r2": "R²",
         "fit_fail": "フィット失敗：{err}",
-        "sec_export": "画像を出力",
+        "sec_export": "画像出力",
         "fmt": "形式",
         "dpi": "解像度 (dpi)",
         "fname": "ファイル名",
         "dl": "画像をダウンロード",
-        "dl_hint": "PDF・SVG はベクター形式で、拡大しても劣化しません。PNG・TIFF はビットマップ形式です。図中の英字は Times New Roman、日本語の漢字・仮名は明朝体で描画します（お使いのパソコンに該当フォントが必要です）。",
+        "dl_hint": "PDF/SVG はベクター形式です。",
     },
 }
 
 
 # ---------------------------------------------------------------- 安全多语言获取函数
 def t(key, **kw):
-    # 优先找当前语言；找不到则自动退回中文；中文也没有则显示 key 本身，彻底杜绝 KeyError 导致的崩溃
     s = TR.get(lang, {}).get(key) or TR.get("zh", {}).get(key, key)
     return s.format(**kw) if kw else s
 
@@ -634,7 +679,6 @@ def transform_x2(x2, kind, p):
 
 
 def renumber_x(x, keep):
-    # 剔除点后，让保留点的坐标依次递补：第一个保留点归零，连续点保持原步长，断开处用中位步长衔接
     x = x.copy()
     kept = np.where(keep)[0]
     if len(kept) == 0:
@@ -652,14 +696,12 @@ def renumber_x(x, keep):
 
 
 def shift_head(x, keep):
-    # 只收拢开头：第一个保留点归零，中间被剔除的空档保持原样
     x = x.copy()
     first = np.where(keep)[0][0]
     return x - x[first]
 
 
 def time_conv(x, unit):
-    # 原始时间单位是秒
     if unit == "ms":
         return x * 1000.0
     if unit == "min":
@@ -717,7 +759,7 @@ def parse_ranges(s):
 
 
 def parse_float(s):
-    s = s.strip()
+    s = str(s).strip()
     return float(s) if s else None
 
 
@@ -801,12 +843,7 @@ AI_SYSTEM = (
     "(cyclic voltammetry, chronoamperometry or chronopotentiometry) produced by a plotting tool; the numbers were "
     "computed by the tool, not by you. Base every statement on the provided numbers and never invent values. "
     "Separate clearly: (1) what the numbers show, (2) possible interpretations and the assumptions they depend on, "
-    "(3) what to check or do next. Point out limits of this analysis (for example: peak currents are not "
-    "baseline-corrected, sweep direction is inferred from the potential, smoothing can distort peaks, few points, "
-    "unknown scan rate or electrode area). Use standard criteria such as the reversibility criteria or the "
-    "Randles-Sevcik / Cottrell relations only when the data supports them, and say when information is insufficient "
-    "for a conclusion. Keep it concise (about 400 words at most), with short paragraphs or bullet lists. "
-    "This is for research use. Reply in {language}."
+    "(3) what to check or do next. Reply in {language}."
 )
 AI_LANG = {"zh": "Simplified Chinese", "ja": "Japanese"}
 
@@ -940,7 +977,12 @@ def cur_label(p):
 def pot_label(p):
     if p["ref"] == "none":
         return "Potential / V"
-    ref = "RHE" if p["to_rhe"] else p["ref"]
+    target = p.get("pot_target", "raw")
+    if target == "she":
+        return "Potential / V vs. SHE"
+    if target == "rhe":
+        return "Potential / V vs. RHE"
+    ref = p["ref"]
     return f"Potential / V vs. {ref}"
 
 
@@ -1042,7 +1084,6 @@ def build_fig(results, mode, p, show_removed):
     xl, yl = axis_labels(mode, p)
     actual_yl = p["lab_y"] or yl
     actual_y2l = (p["lab_y2"] or y2_label(p, p["y2kind"], results[0]["y2name"])) if p["dual"] else ""
-
     actual_x2l = (p["lab_x2"] or x2_label(p, p["x2kind"], results[0]["x2name"])) if ax3 is not None else ""
 
     multi = len(results) > 1
@@ -1084,6 +1125,27 @@ def build_fig(results, mode, p, show_removed):
                 ax.plot(pk["Epc"], pk["ipc"], "^", color=cl, ms=4)
                 ax.annotate(f"$E_{{pc}}$ = {pk['Epc']:.3f} V", (pk["Epc"], pk["ipc"]), textcoords="offset points",
                             xytext=(6, -12), fontsize=max(p["fs"] - 2, 5), color=cl)
+
+    # 绘制自定义文本框 / 注释
+    if p.get("textboxes"):
+        for tb in p["textboxes"]:
+            txt = cjk_safe(tb["text"])
+            kwargs = {
+                "fontsize": tb["fs"],
+                "color": tb["color"],
+                "rotation": tb["rot"],
+                "ha": "center",
+                "va": "center",
+            }
+            if tb["frame"] == "box":
+                kwargs["bbox"] = dict(boxstyle="round,pad=0.3", facecolor="white", edgecolor="#888888", linewidth=0.8, alpha=0.85)
+            elif tb["frame"] == "solid":
+                kwargs["bbox"] = dict(boxstyle="square,pad=0.3", facecolor="white", edgecolor="#000000", linewidth=0.8, alpha=1.0)
+
+            if tb["coord"] == "rel":
+                ax.text(tb["x"], tb["y"], txt, transform=ax.transAxes, **kwargs)
+            else:
+                ax.text(tb["x"], tb["y"], txt, **kwargs)
 
     xl, yl = axis_labels(mode, p)
     ax.set_xlabel(cjk_safe(p["lab_x"] or xl))
@@ -1271,6 +1333,30 @@ def build_plotly(results, mode, p, hover_mode, spikes, show_removed):
                 )
             )
 
+    # 绘制自定义文本框 (Plotly)
+    if p.get("textboxes"):
+        for tb in p["textboxes"]:
+            txt = html_label(tb["text"])
+            is_rel = tb["coord"] == "rel"
+            b_kw = {}
+            if tb["frame"] == "box":
+                b_kw = dict(bordercolor="#888888", borderwidth=1, bgcolor="rgba(255, 255, 255, 0.85)")
+            elif tb["frame"] == "solid":
+                b_kw = dict(bordercolor="#000000", borderwidth=1, bgcolor="#ffffff")
+            
+            fig.add_annotation(
+                x=tb["x"], y=tb["y"],
+                xref="paper" if is_rel else "x",
+                yref="paper" if is_rel else "y",
+                text=txt,
+                showarrow=False,
+                font=dict(size=tb["fs"], color=tb["color"]),
+                textangle=-tb["rot"],
+                xanchor="center",
+                yanchor="middle",
+                **b_kw
+            )
+
     ticks = "inside" if p["tick_dir"] == "in" else "outside"
     spike = dict(showspikes=spikes, spikemode="across", spikesnap="data", spikethickness=1, spikedash="dot", spikecolor="#666")
     fig.update_layout(
@@ -1374,7 +1460,7 @@ if len(cols) < 2:
     st.stop()
 sig = f"{mode}_{len(cols)}"
 
-p = {"cur_raw": "A", "cur_out": "µA", "norm": False, "area": 1.0, "ref": list(REF)[0], "to_rhe": False, "shift": 0.0}
+p = {"cur_raw": "A", "cur_out": "µA", "norm": False, "area": 1.0, "ref": list(REF)[0], "shift": 0.0}
 
 AXC = ["black", "follow", "custom"]
 
@@ -1434,16 +1520,41 @@ with sb.expander(t("grp_data"), expanded=True):
             t("ref"), ["none"] + list(REF) + ["custom"], index=1,
             format_func=lambda r: t("ref_none") if r == "none" else (t("ref_custom") if r == "custom" else r), key="ref",
         )
-        p["ref"], p["ref_E"] = ref_sel, REF.get(ref_sel, 0.0)
+        p["ref_sel"] = ref_sel
         if ref_sel == "custom":
-            p["ref"] = st.text_input(t("ref_custom_name"), key="ref_custom_name").strip() or "custom"
+            p["ref"] = st.text_input(t("ref_custom_name"), value="Ref", key="ref_custom_name").strip() or "Ref"
+            p["ref_E"] = st.number_input(t("ref_custom_E"), value=0.0, step=0.001, format="%.3f", key="ref_custom_E")
+        elif ref_sel != "none":
+            p["ref"] = ref_sel
+            p["ref_E"] = REF.get(ref_sel, 0.0)
+        else:
+            p["ref"] = "none"
+            p["ref_E"] = 0.0
+
         if ref_sel != "none":
-            p["to_rhe"] = st.checkbox(t("to_rhe"), key="to_rhe")
-        if p["to_rhe"]:
-            if ref_sel == "custom":
-                p["ref_E"] = st.number_input(t("ref_custom_E"), value=0.0, step=0.001, format="%.3f", key="ref_custom_E")
+            target_opts = ["raw", "she", "rhe"]
+            p["pot_target"] = st.selectbox(
+                t("pot_target"), target_opts, index=0,
+                format_func=lambda k: t("pot_raw") if k == "raw" else (t("to_she") if k == "she" else t("to_rhe")),
+                key="pot_target"
+            )
+        else:
+            p["pot_target"] = "raw"
+
+        if p["pot_target"] == "she":
+            p["shift"] = p["ref_E"]
+        elif p["pot_target"] == "rhe":
             ph = st.number_input(t("ph"), value=7.0, step=0.1, key="ph")
             p["shift"] = p["ref_E"] + 0.0591 * ph
+        else:
+            p["shift"] = 0.0
+
+        custom_offset_str = st.text_input(t("custom_offset"), value="0.0", key="custom_offset")
+        try:
+            custom_offset_val = float(custom_offset_str.strip()) if custom_offset_str.strip() else 0.0
+        except ValueError:
+            custom_offset_val = 0.0
+        p["shift"] += custom_offset_val
 
 # ================================================================ 2. 数据处理
 with sb.expander(t("grp_proc")):
@@ -1482,9 +1593,7 @@ with sb.expander(t("grp_proc")):
     fit_range = st.text_input(t("fit_range"), key="fit_range") if kind != "none" else ""
 
 # ================================================================ 3. 坐标轴
-# 每个轴一个小节，顺序统一：标签文字 → 范围 → 主刻度间隔 → 轴的颜色；没开的轴不显示
 with sb.expander(t("grp_axes")):
-    # ---- 下方 x 轴
     _h("ax_x")
     p["lab_x"] = st.text_input(t("lab_x"), key="lab_x", help=t("lab_help"))
     r1, r2 = st.columns(2)
@@ -1494,7 +1603,6 @@ with sb.expander(t("grp_axes")):
     axc_x = st.selectbox(t("ax_color"), AXC, index=0, format_func=lambda k: t("yc_" + k), key="axc_x")
     xb_cust = st.color_picker(t("color_xb"), "#000000", key="xb_col") if axc_x == "custom" else "#000000"
 
-    # ---- 上方 x 轴
     p["lab_x2"], x2min, x2max, stx2 = "", "", "", ""
     axc_x2, xt_cust = "follow", "#000000"
     if p["dual_x"]:
@@ -1508,7 +1616,6 @@ with sb.expander(t("grp_axes")):
         axc_x2 = st.selectbox(t("ax_color"), AXC, index=1, format_func=lambda k: t("yc_" + k), key="axc_x2")
         xt_cust = st.color_picker(t("color_xt"), "#000000", key="xt_col") if axc_x2 == "custom" else "#000000"
 
-    # ---- 左 y 轴
     st.divider()
     _h("ax_y")
     p["lab_y"] = st.text_input(t("lab_y"), key="lab_y", help=t("lab_help"))
@@ -1519,7 +1626,6 @@ with sb.expander(t("grp_axes")):
     axc_y = st.selectbox(t("ax_color"), AXC, index=(1 if p["dual"] else 0), format_func=lambda k: t("yc_" + k), key=f"axc_y_{p['dual']}")
     yl_cust = st.color_picker(t("color_yl"), "#000000", key="yl_col") if axc_y == "custom" else "#000000"
 
-    # ---- 右 y 轴
     p["lab_y2"], y2min, y2max, sty2 = "", "", "", ""
     axc_y2, yr_cust = "follow", "#000000"
     if p["dual"]:
@@ -1535,7 +1641,6 @@ with sb.expander(t("grp_axes")):
 
     st.caption(t("lab_note"))
 
-    # ---- 四个轴共用的刻度设置
     st.divider()
     _h("sub_ticks_common")
     st.caption(t("tick_marks"))
@@ -1609,7 +1714,38 @@ with sb.expander(t("grp_curves"), expanded=True):
         else:
             p["custom_legends_x2"].append("")
 
-# 轴的颜色：三选一（黑色 / 跟随曲线 / 自定义）。要等曲线颜色确定后才能解析“跟随”
+# ================================================================ 5. 自定义文本框 / 标注
+with sb.expander(t("grp_textbox")):
+    num_tb = int(st.number_input(t("num_tb"), min_value=0, max_value=10, value=0, step=1, key="num_tb"))
+    textboxes = []
+    for i in range(num_tb):
+        st.markdown(f"**{t('tb_title', n=i+1)}**")
+        tb_txt = st.text_input(t("tb_text"), key=f"tb_txt_{i}")
+        c_coord, c_x, c_y = st.columns([1.5, 1, 1])
+        tb_coord = c_coord.selectbox(t("tb_coord"), ["data", "rel"], format_func=lambda k: t("coord_" + k), key=f"tb_coord_{i}")
+        tb_x = c_x.number_input(t("tb_x"), value=0.5 if tb_coord == "rel" else 0.0, step=0.05 if tb_coord == "rel" else 0.01, format="%.3f" if tb_coord == "rel" else "%.4g", key=f"tb_x_{i}")
+        tb_y = c_y.number_input(t("tb_y"), value=0.5 if tb_coord == "rel" else 0.0, step=0.05 if tb_coord == "rel" else 0.01, format="%.3f" if tb_coord == "rel" else "%.4g", key=f"tb_y_{i}")
+        
+        c_fs, c_rot, c_clr = st.columns([1, 1, 1])
+        tb_fs = c_fs.number_input(t("tb_fs"), min_value=4, max_value=36, value=9, step=1, key=f"tb_fs_{i}")
+        tb_rot = c_rot.number_input(t("tb_rot"), min_value=-360, max_value=360, value=0, step=15, key=f"tb_rot_{i}")
+        tb_color = c_clr.color_picker(t("tb_color"), "#000000", key=f"tb_clr_{i}")
+        
+        tb_frame = st.selectbox(t("tb_frame"), ["none", "box", "solid"], format_func=lambda k: t("frame_" + k), key=f"tb_frame_{i}")
+        
+        if tb_txt.strip():
+            textboxes.append({
+                "text": tb_txt.strip(),
+                "coord": tb_coord,
+                "x": float(tb_x),
+                "y": float(tb_y),
+                "fs": int(tb_fs),
+                "rot": int(tb_rot),
+                "color": tb_color,
+                "frame": tb_frame,
+            })
+    p["textboxes"] = textboxes
+
 def _axis_color(mode_, custom, follow):
     return "#000000" if mode_ == "black" else (follow if mode_ == "follow" else custom)
 
@@ -1620,13 +1756,13 @@ p["yl_col"] = _axis_color(axc_y, yl_cust, _c0l)
 p["yr_col"] = _axis_color(axc_y2, yr_cust, _c0r or "#000000") if p["dual"] else "#000000"
 p["xt_col"] = _axis_color(axc_x2, xt_cust, p["colors_x2"][0] or "#000000") if p["dual_x"] else "#000000"
 
-# ================================================================ 5. 图形外观
+# ================================================================ 6. 图形外观
 with sb.expander(t("grp_fig")):
     p["w"] = st.selectbox(t("width"), [85, 120, 175], format_func=lambda w: t(f"w{w}"), key="width")
     p["h"] = st.slider(t("height"), 40, 120, 65, key="height")
     p["fs"] = st.slider(t("fontsize"), 6, 14, 9, key="fs")
 
-# ================================================================ 6. AI 分析设置
+# ================================================================ 7. AI 分析设置
 with sb.expander(t("sec_ai")):
     ai_key_typed = st.text_input(t("ai_key"), type="password", key="ai_key", help=t("ai_key_help"))
     ai_model = st.text_input(t("ai_model"), value="gemini-3.8-flash", key="ai_model", help=t("ai_model_help"))
@@ -1686,7 +1822,6 @@ for name, df in dfs.items():
         else:
             idx[keep] = idx[keep] - idx[keep][0]
             fix = shift_head
-        # 递补只针对时间轴：CV 的横坐标是电位，不能平移
         if mode != "CV":
             x = fix(x, keep)
         if x2 is not None and x2kind == "time":
@@ -1843,7 +1978,7 @@ payload = {
     "axes": {"x": p["lab_x"] or xl_auto, "y_left": p["lab_y"] or yl_auto},
     "processing": {
         "reference_electrode": None if p["ref"] == "none" else p["ref"],
-        "converted_to_RHE": bool(p["to_rhe"]),
+        "potential_target": p.get("pot_target"),
         "current_normalized_by_area_cm2": p["area"] if p["norm"] else None,
         "outlier_removal": {"hampel_window": win, "hampel_sigma": nsig} if use_hampel else None,
         "excluded_x_ranges": ex_range or None,
